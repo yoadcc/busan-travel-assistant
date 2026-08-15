@@ -8,6 +8,11 @@
   <link rel="stylesheet" href="index.css">
   <!-- FontAwesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- PWA & iOS Mobile Capability -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="釜山旅遊特助">
+  <meta name="theme-color" content="#0ea5e9">
 </head>
 <body>
 
@@ -926,6 +931,14 @@
       return `${hh}:${mm}`;
     }
 
+    // Register Service Worker for Offline PWA Support
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('Service Worker registered successfully:', reg.scope))
+          .catch(err => console.log('Service Worker registration failed:', err));
+      });
+    }
   </script>
 </body>
 </html>
