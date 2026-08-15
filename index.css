@@ -670,23 +670,62 @@ details[open] .details-summary i {
   line-height: 1.4;
 }
 
-/* Special Note Alert inside Timeline Event */
-.event-note {
-  background: #fef3c7;
+/* Collapsible Special Note Alert inside Timeline Event */
+.event-note-details {
+  background: #fffbeb;
   border-left: 3px solid #f59e0b;
-  padding: 0.5rem 0.75rem;
   border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  margin-bottom: 0.75rem;
   font-size: 0.7rem;
   color: #78350f;
-  margin-bottom: 0.75rem;
-  line-height: 1.4;
+  overflow: hidden;
+  transition: all var(--transition-fast);
 }
-.event-note-title {
+
+.event-note-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.45rem 0.75rem;
   font-weight: 700;
-  margin-bottom: 0.15rem;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+}
+.event-note-summary::-webkit-details-marker {
+  display: none;
+}
+
+.event-note-summary-title {
   display: flex;
   align-items: center;
+  gap: 0.35rem;
+  color: #92400e;
+}
+
+.event-note-toggle-tag {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #d97706;
+  background: #fef3c7;
+  padding: 0.15rem 0.45rem;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
   gap: 0.25rem;
+  transition: all 0.2s ease;
+}
+
+.event-note-details[open] .event-note-toggle-tag i {
+  transform: rotate(180deg);
+}
+
+.event-note-content {
+  padding: 0.5rem 0.75rem 0.6rem 0.75rem;
+  border-top: 1px dashed #fde68a;
+  line-height: 1.45;
+  color: #78350f;
+  background: #fffdf5;
 }
 
 /* Korean Address Block */

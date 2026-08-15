@@ -665,12 +665,19 @@
             </div>
             ` : ''}
             
-            <div class="event-note">
-              <div class="event-note-title">
-                <i class="fa-solid fa-circle-info"></i> 景點貼士與提醒
+            <details class="event-note-details">
+              <summary class="event-note-summary">
+                <span class="event-note-summary-title">
+                  <i class="fa-solid fa-circle-info"></i> 景點貼士與提醒
+                </span>
+                <span class="event-note-toggle-tag">
+                  展開貼士 <i class="fa-solid fa-chevron-down"></i>
+                </span>
+              </summary>
+              <div class="event-note-content">
+                ${spot.note}
               </div>
-              <div>${spot.note}</div>
-            </div>
+            </details>
             
             <div class="event-actions">
               <a href="${kakaoUrl}" target="_blank" class="action-link">
