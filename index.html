@@ -26,7 +26,10 @@
       
       <!-- Quick Info Rate Tag -->
       <div id="rate-status" class="rate-banner">
-        <i class="fa-solid fa-spinner fa-spin"></i> 正在獲取即時匯率...
+        <span><i class="fa-solid fa-coins"></i> 匯率: 1 TWD = <span id="banner-rate-display">42.50</span> KRW</span>
+        <button id="refresh-rate-btn" onclick="fetchLatestRate()" class="refresh-rate-btn" title="點擊手動刷新最新即時匯率">
+          <i class="fa-solid fa-rotate"></i> 刷新匯率
+        </button>
       </div>
     </header>
 
@@ -160,6 +163,28 @@
     <!-- ================= TAB 2: ITINERARY PLANNER ================= -->
     <main id="content-itinerary" class="tab-content">
       
+      <!-- Day Selector Dropdown Bar -->
+      <section class="day-selector-panel">
+        <div class="day-selector-header">
+          <label for="day-select-dropdown" class="day-selector-label">
+            <i class="fa-solid fa-calendar-days"></i> 選擇釜山行程天數 (9/11 ~ 9/16):
+          </label>
+          <select id="day-select-dropdown" onchange="switchDay(this.value)" class="day-select-dropdown">
+            <option value="day1">9/11 (週四) Day 1: 西面商圈 & 馬鈴薯排骨湯</option>
+            <option value="day2">9/12 (週五) Day 2: 影島海女村 & 白淺灘文化村</option>
+            <option value="day3" selected>9/13 (週六) Day 3: 甘川洞、松島纜車 & 南浦洞</option>
+            <option value="day4">9/14 (週日) Day 4: 海東龍宮寺、Luge & 海雲台</option>
+            <option value="day5">9/15 (週一) Day 5: 膠囊列車、青沙浦 & 汗蒸幕</option>
+            <option value="day6">9/16 (週二) Day 6: 廣安里海鮮釜飯 & 歸賦</option>
+          </select>
+        </div>
+      </section>
+
+      <!-- Hotel Accommodation Card (Dynamic per day) -->
+      <section id="hotel-card-container" class="hotel-card">
+        <!-- Rendered dynamically -->
+      </section>
+
       <!-- Current Schedule Dashboard -->
       <section class="current-panel">
         <div class="current-tag">
@@ -203,19 +228,19 @@
         <!-- Dynamic timeline events will be generated here -->
       </div>
 
-      <!-- Budget Aggregator Dashboard -->
+      <!-- Daily Budget Summary Card -->
       <section class="budget-summary-card">
         <h3 class="budget-summary-title">
-          <i class="fa-solid fa-sack-dollar"></i> 今日預算執行分析 (KRW/TWD)
+          <i class="fa-solid fa-sack-dollar"></i> 當日預算執行分析 (KRW/TWD)
         </h3>
         <div class="budget-grid">
           <div class="budget-stat">
-            <span class="budget-stat-label">預估總預算</span>
+            <span class="budget-stat-label">當日預估預算</span>
             <span id="budget-estimated" class="budget-stat-val krw">₩ 0</span>
             <span id="budget-estimated-twd" class="budget-stat-label" style="margin-top: 0.1rem;">(NT$ 0)</span>
           </div>
           <div class="budget-stat">
-            <span class="budget-stat-label">實際總花費</span>
+            <span class="budget-stat-label">當日實際花費</span>
             <span id="budget-actual" class="budget-stat-val twd">₩ 0</span>
             <span id="budget-actual-twd" class="budget-stat-label" style="margin-top: 0.1rem; color: var(--secondary-color); font-weight: 700;">(NT$ 0)</span>
           </div>
@@ -228,6 +253,28 @@
         </p>
       </section>
 
+      <!-- Collapsible 6-Day Accumulated Budget Dashboard -->
+      <details class="total-budget-details">
+        <summary class="total-budget-summary">
+          <span><i class="fa-solid fa-calculator"></i> 📊 查看 6 天整趟旅程累積總帳本</span>
+          <i class="fa-solid fa-chevron-down"></i>
+        </summary>
+        <div class="total-budget-content">
+          <div class="budget-grid">
+            <div class="budget-stat">
+              <span class="budget-stat-label">6天 總預算</span>
+              <span id="trip-estimated" class="budget-stat-val krw">₩ 0</span>
+              <span id="trip-estimated-twd" class="budget-stat-label" style="margin-top: 0.1rem;">(NT$ 0)</span>
+            </div>
+            <div class="budget-stat">
+              <span class="budget-stat-label">6天 累積實際花費</span>
+              <span id="trip-actual" class="budget-stat-val twd">₩ 0</span>
+              <span id="trip-actual-twd" class="budget-stat-label" style="margin-top: 0.1rem; color: var(--secondary-color); font-weight: 700;">(NT$ 0)</span>
+            </div>
+          </div>
+        </div>
+      </details>
+
     </main>
 
     <!-- Footer -->
@@ -239,224 +286,481 @@
 
   <!-- JavaScript Logic -->
   <script>
-    // Constants & Global State
-    let currentRate = 44.10;
+    // Current Selected Day State
+    let currentDay = 'day3';
+
+    // Hotel Accommodation Data per day (sourced from 釜山Naver Map地址.docx)
+    const hotelData = {
+      day1: {
+        name: "西面：Arban Hotel 阿班飯店 🏨",
+        address: "부산 부산진구 중앙대로691번길 32",
+        note: "【住宿提醒】9/11 入住 1 晚。位於西面站 6/7 號出口步行 3-5 分鐘，生活機能極佳！"
+      },
+      day2: {
+        name: "廣安里：H Avenue Gwangalli Beach 廣安里海灘飯店 🏨",
+        address: "부산 수영구 광안해변로278번길 42 B동 9층",
+        note: "【換飯店提醒】今日從西面 Arban 退房，移防至廣安里海灘飯店（連住 4 晚至 9/16）！"
+      },
+      day3: {
+        name: "廣安里：H Avenue Gwangalli Beach 廣安里海灘飯店 🏨",
+        address: "부산 수영구 광안해변로278번길 42 B동 9층",
+        note: "【住宿】連住第 2 晚。飯店位於廣安海灘旁，出門即達水邊公園與沙灘。"
+      },
+      day4: {
+        name: "廣安里：H Avenue Gwangalli Beach 廣安里海灘飯店 🏨",
+        address: "부산 수영구 광안해변로278번길 42 B동 9층",
+        note: "【住宿】連住第 3 晚。今日遊覽海東龍宮寺與海雲台，晚間返回廣安里。"
+      },
+      day5: {
+        name: "廣安里：H Avenue Gwangalli Beach 廣安里海灘飯店 🏨",
+        address: "부산 수영구 광안해변로278번길 42 B동 9층",
+        note: "【住宿】連住第 4 晚（最後一晚）。今日體驗海雲台膠囊列車與 Club D Oasis 汗蒸幕。"
+      },
+      day6: {
+        name: "廣安里 ➔ 韓國金海國際機場 ✈️",
+        address: "부산광역시 강서구 공항진입로 108",
+        note: "【歸賦】辦理退房歸賦前往金海機場，搭機返台結束美好行程！"
+      }
+    };
+
+    // Full 6-Day Itinerary Data Object (9/11 ~ 9/16)
+    const itineraryData = {
+      day1: [
+        {
+          id: "d1-spot-1",
+          timeStart: "15:00",
+          timeEnd: "17:30",
+          title: "飯店 Check-in：西面 Arban Hotel 🏨",
+          desc: "辦理飯店入住放置行李，在西面商圈稍微休整漫步。",
+          address: "부산 부산진구 중앙대로691번길 32",
+          note: "【生活機能】周邊有便利商店、換錢所與地鐵站出口，地理位置極為方便。",
+          mapLinkKakao: "https://map.kakao.com/?q=부산 부산진구 중앙대로691번길 32",
+          mapLinkNaver: "https://map.naver.com/v5/search/부산 부산진구 중앙대로691번길 32",
+          estimatedCost: 0,
+          costLabel: "飯店辦理入住"
+        },
+        {
+          id: "d1-spot-2",
+          timeStart: "17:30",
+          timeEnd: "19:00",
+          title: "晚餐：山莊 1988 서면본점 (馬鈴薯排骨湯) 🍲",
+          desc: "享用釜山西面人氣名店「馬鈴薯排骨湯」，湯頭濃郁香辣！",
+          address: "부산 부산진구 동천로 97-6",
+          note: "【推薦】肉質燉煮至軟嫩一撥即離骨，吸飽湯汁的馬鈴薯與大骨令人大呼過癮！",
+          mapLinkKakao: "https://map.kakao.com/?q=부산 부산진구 동천로 97-6",
+          mapLinkNaver: "https://map.naver.com/v5/search/부산 부산진구 동천로 97-6",
+          estimatedCost: 35000,
+          costLabel: "雙人馬鈴薯排骨湯餐費"
+        },
+        {
+          id: "d1-spot-3",
+          timeStart: "19:00",
+          timeEnd: "21:00",
+          title: "購物：Olive Young 西面總店 🛍️",
+          desc: "大逛西面兩層樓超大 Olive Young 旗艦店採買美妝與護膚品。",
+          address: "부산광역시 부산진구 중앙대로 704-1 1층-2층",
+          note: "【營業時間】10:00～23:00。出示護照可直接現場辦理免稅退稅！",
+          mapLinkKakao: "https://map.kakao.com/?q=부산광역시 부산진구 중앙대로 704-1",
+          mapLinkNaver: "https://map.naver.com/v5/search/부산광역시 부산진구 중앙대로 704-1",
+          estimatedCost: 50000,
+          costLabel: "預估購物採買花費"
+        }
+      ],
+
+      day2: [
+        {
+          id: "d2-spot-1",
+          timeStart: "08:30",
+          timeEnd: "09:30",
+          title: "早餐：Egg Drop 西面樂天後門店 🥪",
+          desc: "享用經典現烤奶油吐司，搭配爆漿滑嫩歐姆蛋與火腿起司。",
+          address: "부산 부산진구 부전로66번길 12",
+          note: "【推薦】熱騰騰的蒜香培根起司吐司非常推，搭配冰美式咖啡超讚！",
+          mapLinkKakao: "https://map.kakao.com/?q=부산 부산진구 부전로66번길 12",
+          mapLinkNaver: "https://map.naver.com/v5/search/부산 부산진구 부전로66번길 12",
+          estimatedCost: 12000,
+          costLabel: "Egg Drop 早餐費"
+        },
+        {
+          id: "d2-spot-2",
+          timeStart: "09:30",
+          timeEnd: "10:30",
+          title: "換飯店：西面 Arban 退房 ➔ 影島/廣安里 🚕",
+          desc: "辦理退房，準備移防至廣安里飯店 Check-in 或寄放行李。",
+          address: "부산 수영구 광안해변로278번길 42",
+          note: "【交通】搭計程車移防（預估車資 ₩15,000），輕鬆開啟影島海景之旅。",
+          mapLinkKakao: "https://map.kakao.com/?q=부산 수영구 광안해변로278번길 42",
+          mapLinkNaver: "https://map.naver.com/v5/search/부산 수영구 광안해변로278번길 42",
+          estimatedCost: 15000,
+          costLabel: "移防計程車資"
+        },
+        {
+          id: "d2-spot-3",
+          timeStart: "10:30",
+          timeEnd: "12:00",
+          title: "景點：影島海女村 (영도해녀촌) 🌊",
+          desc: "坐在海邊海岸岩石上，享用海女現撈新鮮海膽、拉麵與紫菜飯捲。",
+          address: "부산광역시 영도구 중리남로 2-36",
+          note: "【美味秘訣】一定要點海膽＋海膽拉麵＋飯捲！把新鮮海膽放在飯捲上一口吞下，極致鮮美！",
+          mapLinkKakao: "https://map.kakao.com/?q=부산광역시 영도구 중리남로 2-36",
+          mapLinkNaver: "https://map.naver.com/v5/search/부산광역시 영도구 중리남로 2-36",
+          estimatedCost: 35000,
+          costLabel: "海鮮海膽拉麵餐費"
+        },
+        {
+          id: "d2-spot-4",
+          timeStart: "12:00",
+          timeEnd: "13:30",
+          title: "景點：國立海洋博物館 (국립해양박물관) 🏛️",
+          desc: "免門票參觀超壯觀國家級海洋博物館，裡面有巨大圓柱海底隧道水族館！",
+          address: "부산광역시 영도구 해양로301번길 45",
+          note: "【亮點】冷氣涼爽，可近距離觀賞企鵝、魟魚與各式海龜，免費參觀！",
+          mapLinkKakao: "https://map.kakao.com/?q=부산광역시 영도구 해양로301번길 45",
+          mapLinkNaver: "https://map.naver.com/v5/search/부산광역시 영도구 해양로301번길 45",
+          estimatedCost: 0,
+          costLabel: "免費參觀"
+        },
+        {
+          id: "d2-spot-5",
+          timeStart: "13:30",
+          timeEnd: "15:30",
+          title: "景點：影島海景咖啡廳 P.ARK (피아크) ☕",
+          desc: "朝聖超巨型海景複合式咖啡廳，享受無敵面海大草皮與精緻甜點麵包。",
+          address: "부산광역시 영도구 해양로195번길 180",
+          note: "【體驗】4樓景色最開闊，採光極佳，看大船進出釜山港非常療癒。",
+          mapLinkKakao: "https://map.kakao.com/?q=부산광역시 영도구 해양로195번길 180",
+          mapLinkNaver: "https://map.naver.com/v5/search/부산광역시 영도구 해양로195번길 180",
+          estimatedCost: 20000,
+          costLabel: "海景下午茶點心"
+        },
+        {
+          id: "d2-spot-6",
+          timeStart: "15:30",
+          timeEnd: "17:30",
+          title: "景點：白淺灘文化村 (흰여울문화마을) 🎨",
+          desc: "沿海邊懸崖步道漫步藍白彩繪村落，拍海景隧道與幾何階梯大片。",
+          address: "부산광역시 영도구 절영로 194",
+          note: "【路線】順著彩虹階梯向下可走到絕壁海岸隧道，傍晚海景夕陽超迷人！",
+          mapLinkKakao: "https://map.kakao.com/?q=부산광역시 영도구 절영로 194",
+          mapLinkNaver: "https://map.naver.com/v5/search/부산광역시 영도구 절영로 194",
+          estimatedCost: 10000,
+          costLabel: "文化村文創小物"
+        },
+        {
+          id: "d2-spot-7",
+          timeStart: "17:30",
+          timeEnd: "19:00",
+          title: "晚餐：水邊最高豬肉湯飯 (수변최고돼지국밥) 🍲",
+          desc: "朝聖釜山豬肉湯飯排名第一名名店！鮮美濃郁無腥味。",
+          address: "부산 수영구 광안해변로370번길 9-32",
+          note: "【美食】加入韭菜、蝦醬調味，搭配金黃酥脆的抗生素豬五花，湯頭濃郁令人回味無窮。",
+          mapLinkKakao: "https://map.kakao.com/?q=부산 수영구 광안해변로370번길 9-32",
+          mapLinkNaver: "https://map.naver.com/v5/search/부산 수영구 광안해변로370번길 9-32",
+          estimatedCost: 24000,
+          costLabel: "豬肉湯飯晚餐費"
+        },
+        {
+          id: "d2-spot-8",
+          timeStart: "19:00",
+          timeEnd: "20:00",
+          title: "飯店 Check-in：H Avenue 廣安里海灘飯店 🏨",
+          desc: "辦理入住（廣安里連住 4 晚），在房間與海灘欣賞廣安大橋浪漫夜景。",
+          address: "부산 수영구 광안해변로278번길 42 B동 9층",
+          note: "【飯店】房間面海第一排，晚上放鬆欣賞海灘與燈光秀。",
+          mapLinkKakao: "https://map.kakao.com/?q=부산 수영구 광안해변로278번길 42",
+          mapLinkNaver: "https://map.naver.com/v5/search/부산 수영구 광안해변로278번길 42",
+          estimatedCost: 0,
+          costLabel: "入住 Check-in"
+        }
+      ],
+
+      day3: [
+        {
+          id: "spot-1",
+          timeStart: "08:00",
+          timeEnd: "09:00",
+          title: "早餐：ALL SUNDAY 貝果 廣安店 🥯",
+          desc: "廣安里必吃超人氣貝果，口感扎實Q彈，起司抹醬大推！",
+          address: "부산 수영구 광안로61번길 28 1층",
+          note: "【推薦】熱門口味容易完售，建議踩點或提早抵達挑選好口味。",
+          mapLinkKakao: "https://map.kakao.com/?q=부산 수영구 광안로61번길 28",
+          mapLinkNaver: "https://map.naver.com/v5/search/부산 수영구 광안로61번길 28 1층",
+          estimatedCost: 10000,
+          costLabel: "貝果早餐費"
+        },
+        {
+          id: "spot-2",
+          timeStart: "09:00",
+          timeEnd: "09:35",
+          title: "轉場：廣安里 ➔ 甘川洞 🚕",
+          desc: "搭乘計程車，從廣安里直奔甘川洞文化村。",
+          address: "부산광역시 사하구 감내2로 203 (감천문화마을)",
+          note: "【交通】建議直達計程車以節省體力 (車程約 35 分鐘，預估車資 ₩18,000)。",
+          mapLinkKakao: "https://map.kakao.com/?q=부산광역시 사하구 감내2로 203",
+          mapLinkNaver: "https://map.naver.com/v5/search/부산광역시 사하구 감내2로 203",
+          estimatedCost: 18000,
+          costLabel: "預估計程車資"
+        },
+        {
+          id: "spot-3",
+          timeStart: "09:35",
+          timeEnd: "11:30",
+          title: "景點：甘川洞文化村 🎨",
+          desc: "探索彩色壁畫村，尋找小王子與狐狸合照，到景觀咖啡廳俯瞰村落。",
+          address: "부산광역시 사하구 감내2로 203",
+          note: "【體驗】甘川洞手翻書 Flipbook Studio - Busan pass<br>【提醒】手翻書：8秒鐘的連續動態錄影。建議事先想好 2至3個動作(如：揮手 ➔ 比愛心 ➔ 親一下)，錄製效果最生動！",
+          mapLinkKakao: "https://map.kakao.com/?q=부산광역시 사하구 감내2로 203",
+          mapLinkNaver: "https://map.naver.com/v5/search/부산광역시 사하구 감내2로 203",
+          estimatedCost: 0,
+          costLabel: "手翻書 (Busan Pass 免費)"
+        },
+        {
+          id: "spot-4",
+          timeStart: "11:30",
+          timeEnd: "11:45",
+          title: "轉場：甘川洞 ➔ 松島 🚕",
+          desc: "前往松島午餐餐廳「海底貝殼王國」。",
+          address: "부산 서구 송도해변로 147-1 (바닷속조개왕국)",
+          note: "【交通】計程車車程極短，約 12-15 分鐘。預估車資約 ₩6,000。",
+          mapLinkKakao: "https://map.kakao.com/?q=부산 서구 송도해변로 147-1",
+          mapLinkNaver: "https://map.naver.com/v5/search/부산 서구 송도해변로 147-1",
+          estimatedCost: 6000,
+          costLabel: "預估計程車資"
+        },
+        {
+          id: "spot-5",
+          timeStart: "11:45",
+          timeEnd: "13:30",
+          title: "午餐：海底貝殼王國（烤扇貝） 🦪",
+          desc: "松島經典海邊美味！享用炭火現烤、放滿起司的新鮮扇貝。",
+          address: "부산 서구 송도해변로 147-1",
+          note: "【推薦】烤扇貝加上起司與洋蔥調味，最後配上海苔炒飯堪稱一絕！",
+          mapLinkKakao: "https://map.kakao.com/?q=부산 서구 송도해변로 147-1",
+          mapLinkNaver: "https://map.naver.com/v5/search/부산 서구 송도해변로 147-1",
+          estimatedCost: 60000,
+          costLabel: "雙人烤扇貝餐費"
+        },
+        {
+          id: "spot-6",
+          timeStart: "13:30",
+          timeEnd: "13:40",
+          title: "轉場：步行前往纜車站 🚶",
+          desc: "從餐廳出發移動至「松島灣纜車站」。",
+          address: "부산 서구 송도해변로 171",
+          note: "【交通】可散步慢慢沿海岸走（約 10 分鐘）或搭計程車（3分鐘，基本車資）。",
+          mapLinkKakao: "https://map.kakao.com/?q=부산 서구 송도해변로 171",
+          mapLinkNaver: "https://map.naver.com/v5/search/부산 서구 송도해변로 171",
+          estimatedCost: 0,
+          costLabel: "步行前往"
+        },
+        {
+          id: "spot-7",
+          timeStart: "13:40",
+          timeEnd: "14:20",
+          title: "景點：松島開卡與搭纜車 🚠",
+          desc: "使用 Busan Pass 兌換松島海上纜車門票，排隊搭乘水晶車廂跨海。",
+          address: "부산 서구 송도해변로 171 (송도해상케이블카)",
+          note: "【提醒】週日下午排隊搭乘水晶車廂（透明地板）人潮眾多，請務必預留足夠候車排隊時間。",
+          mapLinkKakao: "https://map.kakao.com/?q=부산 서구 송도해변로 171",
+          mapLinkNaver: "https://map.naver.com/v5/search/부산 서구 송도해변로 171",
+          estimatedCost: 0,
+          costLabel: "海上纜車 (Busan Pass 免費)"
+        },
+        {
+          id: "spot-8",
+          timeStart: "14:20",
+          timeEnd: "14:50",
+          title: "景點：朝聖松島龍宮雲橋 🌉",
+          desc: "行走在網狀鏤空的雲橋上，感受海浪在腳下奔騰的震撼，眺望陡峭懸崖。",
+          address: "부산광역시 서구 암남동 620-53",
+          note: "【注意】需現場自費 ₩1,000 (不含在Pass)。此處海風強勁，請留意保暖與隨身物品。<br>【路線】纜車下站 (SkyPark站) 出口直走是岩南公園，順著右手邊下坡小路走 5 分鐘即達雲橋售票處。",
+          mapLinkKakao: "https://map.kakao.com/?q=부산광역시 서구 암남동 620-53",
+          mapLinkNaver: "https://map.naver.com/v5/search/부산광역시 서구 암남동 620-53",
+          estimatedCost: 1000,
+          costLabel: "雲橋門票 (需自費)"
+        },
+        {
+          id: "spot-9",
+          timeStart: "14:50",
+          timeEnd: "15:10",
+          title: "拍照：岩南公園海岸木棧道 📸",
+          desc: "沿著雲橋旁的海岸懸崖木棧道漫步，拍攝極具張力的絕美海景合影。",
+          address: "부산광역시 서구 암남동 620-53",
+          note: "【推薦】這段路程海景最颯、最開闊！大約走 10 分鐘拍完精華照片後原路折返。",
+          mapLinkKakao: "https://map.kakao.com/?q=부산광역시 서구 암남동 620-53",
+          mapLinkNaver: "https://map.naver.com/v5/search/부산광역시 서구 암남동 620-53",
+          estimatedCost: 0,
+          costLabel: "免費參觀"
+        },
+        {
+          id: "spot-10",
+          timeStart: "15:10",
+          timeEnd: "15:40",
+          title: "景點：纜車站頂樓與恐龍廣場 🦖",
+          desc: "回到纜車 SkyPark 站，上觀景台與小王子拍照，並在戶外看會發聲的動態恐龍。",
+          address: "부산 서구 송도해변로 171",
+          note: "【指南】直奔 SkyPark 站 3 樓觀景台拍小王子，之後到 1 樓廣場和高聳的巨大暴龍、翼龍合照。",
+          mapLinkKakao: "https://map.kakao.com/?q=부산 서구 송도해변로 171",
+          mapLinkNaver: "https://map.naver.com/v5/search/부산 서구 송도해변로 171",
+          estimatedCost: 0,
+          costLabel: "免費參觀"
+        },
+        {
+          id: "spot-11",
+          timeStart: "15:40",
+          timeEnd: "16:00",
+          title: "回程：搭乘回程纜車 🚠",
+          desc: "搭纜車返回松島灣站。在海中央迎接斜陽，欣賞波光粼粼的夕陽海景。",
+          address: "부산 서구 송도해변로 171",
+          note: "【提醒】同樣需排隊，接近黃昏時的海景搭配落日非常美麗，相機不要收！",
+          mapLinkKakao: "https://map.kakao.com/?q=부산 서구 송도해변로 171",
+          mapLinkNaver: "https://map.naver.com/v5/search/부산 서구 송도해변로 171",
+          estimatedCost: 0,
+          costLabel: "回程纜車"
+        },
+        {
+          id: "spot-12",
+          timeStart: "16:00",
+          timeEnd: "16:15",
+          title: "轉場：松島 ➔ 南浦洞 🚕",
+          desc: "從松島纜車站搭計程車移防南浦洞繁華商圈。",
+          address: "부산광역시 중구 비프광장로 36",
+          note: "【交通】計程車車程約 10-15 分鐘，預估車資 ₩7,000。",
+          mapLinkKakao: "https://map.kakao.com/?q=부산광역시 중구 비프광장로 36",
+          mapLinkNaver: "https://map.naver.com/v5/search/부산광역시 중구 비프광장로 36",
+          estimatedCost: 7000,
+          costLabel: "預估計程車資"
+        },
+        {
+          id: "spot-13",
+          timeStart: "16:20",
+          timeEnd: "16:50",
+          title: "點心：BIFF 廣場吃黑糖餅 🥞",
+          desc: "朝聖釜山招牌點心「元祖黑糖餅」。",
+          address: "부산광역시 중구 비프광장로 36",
+          note: "【美食】現炸熱騰騰金黃酥脆的黑糖餅塞滿堅果，非常排隊，但速度很快。建議一拿到就熱熱吃，極度美味！",
+          mapLinkKakao: "https://map.kakao.com/?q=부산광역시 중구 비프광장로 36",
+          mapLinkNaver: "https://map.naver.com/v5/search/부산광역시 중구 비프광장로 36",
+          estimatedCost: 4000,
+          costLabel: "黑糖餅點心費 (2人份)"
+        },
+        {
+          id: "spot-14",
+          timeStart: "16:50",
+          timeEnd: "20:00",
+          title: "逛街與晚餐：南浦洞精華區 🛍️",
+          desc: "大逛光復路、國際市場、樂天百貨光復店(狂逛大創與超市)。晚餐在南浦蔘雞湯享用熱騰騰的雞湯。",
+          address: "부산광역시 중구 남포길 16-1 (남포삼계탕)",
+          note: "【推薦】樂天百貨 11 樓頂樓有免費花園，是看「影島大橋」的絕佳私房景點！<br>【晚餐】南浦蔘雞湯 (남포삼계탕) 擁有數十年歷史，雞肉軟嫩、糯米香濃，附人蔘酒！",
+          mapLinkKakao: "https://map.kakao.com/?q=부산광역시 중구 남포길 16-1",
+          mapLinkNaver: "https://map.naver.com/v5/search/부산광역시 중구 남포길 16-1",
+          estimatedCost: 45000,
+          costLabel: "預估晚餐及逛街花費"
+        },
+        {
+          id: "spot-15",
+          timeStart: "20:00",
+          timeEnd: "20:30",
+          title: "回程：南浦洞 ➔ 廣安里 🚕",
+          desc: "搭乘計程車返回廣安里住宿，為一日行程劃下句點。",
+          address: "부산 수영구 광안해변로278번길 42 (H Avenue Hotel)",
+          note: "【交通】強烈建議直接搭乘計程車直達廣安里 (約 25 分鐘，行經廣安大橋欣賞夜景，預估車資 ₩15,000)。",
+          mapLinkKakao: "https://map.kakao.com/?q=부산 수영구 광안해변로278번길 42",
+          mapLinkNaver: "https://map.naver.com/v5/search/부산 수영구 광안해변로278번길 42",
+          estimatedCost: 15000,
+          costLabel: "回程計程車資"
+        }
+      ],
+
+      day4: [
+        {
+          id: "d4-spot-1",
+          timeStart: "08:30",
+          timeEnd: "11:00",
+          title: "景點：海東龍宮寺 (해동 용궁사) 🐉",
+          desc: "朝聖韓國唯一建在海邊海蝕崖上的古剎，聽濤觀海景致氣勢磅礡！",
+          address: "부산광역시 기장군 기장읍 용궁길 86",
+          note: "【注意事項】入口處有十二生肖雕像，寺內洗手間設備完善。",
+          mapLinkKakao: "https://map.kakao.com/?q=부산광역시 기장군 기장읍 용궁길 86",
+          mapLinkNaver: "https://map.naver.com/v5/search/부산광역시 기장군 기장읍 용궁길 86",
+          estimatedCost: 0,
+          costLabel: "免費參觀"
+        },
+        {
+          id: "d4-spot-2",
+          timeStart: "11:00",
+          timeEnd: "12:30",
+          title: "午餐：龍宮海鮮托盤炸醬 (용궁해물야채쟁반짜장) 🍜",
+          desc: "享用滿滿魷魚、蝦仁與蔬菜現炒的超狂托盤海鮮炸醬麵。",
+          address: "부산광역시 기장군 기장읍 시랑리 393-6",
+          note: "【美食】大份量炸醬麵微辣香濃，搭配海鮮糖醋肉簡直絕配！",
+          mapLinkKakao: "https://map.kakao.com/?q=부산광역시 기장군 기장읍 시랑리 393-6",
+          mapLinkNaver: "https://map.naver.com/v5/search/부산광역시 기장군 기장읍 시랑리 393-6",
+          estimatedCost: 22000,
+          costLabel: "海鮮托盤炸醬麵餐費"
+        },
+        {
+          id: "d4-spot-3",
+          timeStart: "12:30",
+          timeEnd: "15:30",
+          title: "體驗：釜山 Skyline Luge 斜坡滑車 🏎️",
+          desc: "搭乘纜車攻頂，駕駛無動力賽車從蜿蜒斜坡賽道一路俯衝疾馳！",
+          address: "부산 기장군 기장읍 기장해안로 205",
+          note: "【重要提醒】換好的實體門票請務必妥善收好！每次玩都需要出示掃 QR Code。<br>自備拋棄式浴帽戴在頭盔內更乾淨衛生。",
+          mapLinkKakao: "https://map.kakao.com/?q=부산 기장군 기장읍 기장해안로 205",
+          mapLinkNaver: "https://map.naver.com/v5/search/부산 기장군 기장읍 기장해안로 205",
+          estimatedCost: 35000,
+          costLabel: "Luge 滑車門票 (Busan Pass)"
+        },
+        {
+          id: "d4-spot-4",
+          timeStart: "16:00",
+          timeEnd: "18:00",
+          title: "景點：海雲台傳統市場 (해운대시장) 🍢",
+          desc: "漫步海雲台熱鬧老街市場，品嚐炸物、辣炒年糕與炭烤盲鰻。",
+          address: "부산광역시 해운대구 구남로41번길 22-1",
+          note: "【美食推薦】尚浩家辣炒年糕、炭烤盲鰻一條街美食雲集！",
+          mapLinkKakao: "https://map.kakao.com/?q=부산광역시 해운대구 구남로41번길 22-1",
+          mapLinkNaver: "https://map.naver.com/v5/search/부산광역시 해운대구 구남로41번길 22-1",
+          estimatedCost: 15000,
+          costLabel: "海雲台市場小吃費"
+        },
+        {
+          id: "d4-spot-5",
+          timeStart: "18:00",
+          timeEnd: "19:30",
+          title: "晚餐：名品海雲台蔘雞湯 (해운대소문난삼계탕) 🍲",
+          desc: "品嚐海雲台知名數十年古法蔘雞湯，雞肉嫩滑、糯米綿密。",
+          address: "부산광역시 해운대구 중동2로 6",
+          note: "【營業時間】10:30~21:00 (最後點餐 20:20)。隨湯附贈人蔘酒小瓶，可直接飲用或加入湯中提味！",
+          mapLinkKakao: "https://map.kakao.com/?q=부산광역시 해운대구 중동2로 6",
+          mapLinkNaver: "https://map.naver.com/v5/search/부산광역시 해운대구 중동2로 6",
+          estimatedCost: 36000,
+          costLabel: "雙人蔘雞湯晚餐費"
+        },
+        {
+          id: "d4-spot-6",
+          timeStart: "19:30",
+          timeEnd: "21:00",
+          title: "夜景：The Bay 101 (더베이101) 🌃",
+          desc: "拍攝釜山最著名稱霸 IG 的「摩天大樓海面倒影夢幻夜景」。",
+          address: "부산광역시 해운대구 동백로 52",
+          note: "【打卡攻略】在旁邊空地倒水創造鏡面倒影，搭配身後海雲台高樓群燈光極具張力！",
+          mapLinkKakao: "https://map.kakao.com/?q=부산광역시 해운대구 동백로 52",
+          mapLinkNaver: "https://map.naver.com/v5/search/부산광역시 해운대구 동백로 52",
+          estimatedCost: 10000,
+          costLabel: "夜景飲料點心"
+        }
+      ]
+    };
+
+    let currentRate = 42.50;
     const apiURL = 'https://open.er-api.com/v6/latest/TWD';
-    
+
     // DOM Elements
     const twdInput = document.getElementById('twd-input');
     const krwInput = document.getElementById('krw-input');
     const rateInput = document.getElementById('rate-input');
-    const rateStatus = document.getElementById('rate-status');
-    
-    // Itinerary Data Array (Addresses sourced from 釜山Naver Map地址.docx)
-    const itinerary = [
-      {
-        id: "spot-1",
-        timeStart: "08:00",
-        timeEnd: "09:00",
-        title: "早餐：ALL SUNDAY 貝果 廣安店 🥯",
-        desc: "廣安里必吃超人氣貝果，口感扎實Q彈，起司抹醬大推！",
-        address: "부산 수영구 광안로61번길 28 1층",
-        note: "【推薦】熱門口味容易完售，建議踩點或提早抵達挑選好口味。",
-        mapLinkKakao: "https://map.kakao.com/?q=부산 수영구 광안로61번길 28",
-        mapLinkNaver: "https://map.naver.com/v5/search/부산 수영구 광안로61번길 28 1층",
-        estimatedCost: 10000,
-        costLabel: "貝果早餐費"
-      },
-      {
-        id: "spot-2",
-        timeStart: "09:00",
-        timeEnd: "09:35",
-        title: "轉場：廣安里 ➔ 甘川洞 🚕",
-        desc: "搭乘計程車，從廣安里直奔甘川洞文化村。",
-        address: "부산廣域市 沙下區 甘內2路 203 (감천문화마을)",
-        note: "【交通】建議直達計程車以節省體力 (車程約 35 分鐘，預估車資 ₩18,000)。",
-        mapLinkKakao: "https://map.kakao.com/?q=부산광역시 사하구 감내2로 203",
-        mapLinkNaver: "https://map.naver.com/v5/search/부산광역시 사하구 감내2로 203",
-        estimatedCost: 18000,
-        costLabel: "預估計程車資"
-      },
-      {
-        id: "spot-3",
-        timeStart: "09:35",
-        timeEnd: "11:30",
-        title: "景點：甘川洞文化村 🎨",
-        desc: "探索彩色壁畫村，尋找小王子與狐狸合照，到景觀咖啡廳俯瞰村落。",
-        address: "부산광역시 사하구 감내2로 203",
-        note: "【體驗】甘川洞手翻書 Flipbook Studio - Busan pass<br>【提醒】手翻書：8秒鐘的連續動態錄影。建議事先想好 2至3個幅度大且連貫的動作(如：揮手 ➔ 比愛心 ➔ 親一下)，錄製效果最生動！",
-        mapLinkKakao: "https://map.kakao.com/?q=부산광역시 사하구 감내2로 203",
-        mapLinkNaver: "https://map.naver.com/v5/search/부산광역시 사하구 감내2로 203",
-        estimatedCost: 0,
-        costLabel: "手翻書 (Busan Pass 免費)"
-      },
-      {
-        id: "spot-4",
-        timeStart: "11:30",
-        timeEnd: "11:45",
-        title: "轉場：甘川洞 ➔ 松島 🚕",
-        desc: "前往松島午餐餐廳「海底貝殼王國」。",
-        address: "부산 서구 송도해변로 147-1 (바닷속조개왕국)",
-        note: "【交通】計程車車程極短，約 12-15 分鐘。預估車資約 ₩6,000。",
-        mapLinkKakao: "https://map.kakao.com/?q=부산 서구 송도해변로 147-1",
-        mapLinkNaver: "https://map.naver.com/v5/search/부산 서구 송도해변로 147-1",
-        estimatedCost: 6000,
-        costLabel: "預估計程車資"
-      },
-      {
-        id: "spot-5",
-        timeStart: "11:45",
-        timeEnd: "13:30",
-        title: "午餐：海底貝殼王國（烤扇貝） 🦪",
-        desc: "松島經典海邊美味！享用炭火現烤、放滿起司的新鮮扇貝。",
-        address: "부산 서구 송도해변로 147-1",
-        note: "【推薦】烤扇貝加上起司與洋蔥調味，最後配上海苔炒飯堪稱一絕！",
-        mapLinkKakao: "https://map.kakao.com/?q=부산 서구 송도해변로 147-1",
-        mapLinkNaver: "https://map.naver.com/v5/search/부산 서구 송도해변로 147-1",
-        estimatedCost: 60000,
-        costLabel: "雙人烤扇貝餐費"
-      },
-      {
-        id: "spot-6",
-        timeStart: "13:30",
-        timeEnd: "13:40",
-        title: "轉場：步行前往纜車站 🚶",
-        desc: "從餐廳出發移動至「松島灣纜車站」。",
-        address: "부산 서구 송도해변로 171",
-        note: "【交通】可散步慢慢沿海岸走（約 10 分鐘）或搭計程車（3分鐘，基本車資）。",
-        mapLinkKakao: "https://map.kakao.com/?q=부산 서구 송도해변로 171",
-        mapLinkNaver: "https://map.naver.com/v5/search/부산 서구 송도해변로 171",
-        estimatedCost: 0,
-        costLabel: "步行前往"
-      },
-      {
-        id: "spot-7",
-        timeStart: "13:40",
-        timeEnd: "14:20",
-        title: "景點：松島開卡與搭纜車 🚠",
-        desc: "使用 Busan Pass 兌換松島海上纜車門票，排隊搭乘水晶車廂跨海。",
-        address: "부산 서구 송도해변로 171 (송도해상케이블카)",
-        note: "【提醒】週日下午排隊搭乘水晶車廂（透明地板）人潮眾多，請務必預留足夠候車排隊時間。",
-        mapLinkKakao: "https://map.kakao.com/?q=부산 서구 송도해변로 171",
-        mapLinkNaver: "https://map.naver.com/v5/search/부산 서구 송도해변로 171",
-        estimatedCost: 0,
-        costLabel: "海上纜車 (Busan Pass 免費)"
-      },
-      {
-        id: "spot-8",
-        timeStart: "14:20",
-        timeEnd: "14:50",
-        title: "景點：朝聖松島龍宮雲橋 🌉",
-        desc: "行走在網狀鏤空的雲橋上，感受海浪在腳下奔騰的震撼，眺望陡峭懸崖。",
-        address: "부산광역시 서구 암남동 620-53",
-        note: "【注意】需現場自費 ₩1,000 (不含在Pass)。此處海風強勁，請留意保暖與隨身物品。<br>【路線】纜車下站 (SkyPark站) 出口直走是岩南公園，順著右手邊下坡小路走 5 分鐘即達雲橋售票處。",
-        mapLinkKakao: "https://map.kakao.com/?q=부산광역시 서구 암남동 620-53",
-        mapLinkNaver: "https://map.naver.com/v5/search/부산광역시 서구 암남동 620-53",
-        estimatedCost: 1000,
-        costLabel: "雲橋門票 (需自費)"
-      },
-      {
-        id: "spot-9",
-        timeStart: "14:50",
-        timeEnd: "15:10",
-        title: "拍照：岩南公園海岸木棧道 📸",
-        desc: "沿著雲橋旁的海岸懸崖木棧道漫步，拍攝極具張力的絕美海景合影。",
-        address: "부산광역시 서구 암남동 620-53",
-        note: "【推薦】這段路程海景最颯、最開闊！大約走 10 分鐘拍完精華照片後原路折返。",
-        mapLinkKakao: "https://map.kakao.com/?q=부산광역시 서구 암남동 620-53",
-        mapLinkNaver: "https://map.naver.com/v5/search/부산광역시 서구 암남동 620-53",
-        estimatedCost: 0,
-        costLabel: "免費參觀"
-      },
-      {
-        id: "spot-10",
-        timeStart: "15:10",
-        timeEnd: "15:40",
-        title: "景點：纜車站頂樓與恐龍廣場 🦖",
-        desc: "回到纜車 SkyPark 站，上觀景台與小王子拍照，並在戶外看會發聲的動態恐龍。",
-        address: "부산 서구 송도해변로 171",
-        note: "【指南】直奔 SkyPark 站 3 樓觀景台拍小王子，之後到 1 樓廣場和高聳的巨大暴龍、翼龍合照。",
-        mapLinkKakao: "https://map.kakao.com/?q=부산 서구 송도해변로 171",
-        mapLinkNaver: "https://map.naver.com/v5/search/부산 서구 송도해변로 171",
-        estimatedCost: 0,
-        costLabel: "免費參觀"
-      },
-      {
-        id: "spot-11",
-        timeStart: "15:40",
-        timeEnd: "16:00",
-        title: "回程：搭乘回程纜車 🚠",
-        desc: "搭纜車返回松島灣站。在海中央迎接斜陽，欣賞波光粼粼的夕陽海景。",
-        address: "부산 서구 송도해변로 171",
-        note: "【提醒】同樣需排隊，接近黃昏時的海景搭配落日非常美麗，相機不要收！",
-        mapLinkKakao: "https://map.kakao.com/?q=부산 서구 송도해변로 171",
-        mapLinkNaver: "https://map.naver.com/v5/search/부산 서구 송도해변로 171",
-        estimatedCost: 0,
-        costLabel: "回程纜車"
-      },
-      {
-        id: "spot-12",
-        timeStart: "16:00",
-        timeEnd: "16:15",
-        title: "轉場：松島 ➔ 南浦洞 🚕",
-        desc: "從松島纜車站搭計程車移防南浦洞繁華商圈。",
-        address: "부산광역시 중구 비프광장로 36",
-        note: "【交通】計程車車程約 10-15 分鐘，預估車資 ₩7,000。",
-        mapLinkKakao: "https://map.kakao.com/?q=부산광역시 중구 비프광장로 36",
-        mapLinkNaver: "https://map.naver.com/v5/search/부산광역시 중구 비프광장로 36",
-        estimatedCost: 7000,
-        costLabel: "預估計程車資"
-      },
-      {
-        id: "spot-13",
-        timeStart: "16:20",
-        timeEnd: "16:50",
-        title: "點心：BIFF 廣場吃黑糖餅 🥞",
-        desc: "朝聖釜山招牌點心「元祖黑糖餅」。",
-        address: "부산광역시 중구 비프광장로 36",
-        note: "【美食】現炸熱騰騰金黃酥脆的黑糖餅塞滿堅果，非常排隊，但速度很快。建議一拿到就熱熱吃，極度美味！",
-        mapLinkKakao: "https://map.kakao.com/?q=부산광역시 중구 비프광장로 36",
-        mapLinkNaver: "https://map.naver.com/v5/search/부산광역시 중구 비프광장로 36",
-        estimatedCost: 4000,
-        costLabel: "黑糖餅點心費 (2人份)"
-      },
-      {
-        id: "spot-14",
-        timeStart: "16:50",
-        timeEnd: "20:00",
-        title: "逛街與晚餐：南浦洞精華區 🛍️",
-        desc: "大逛光復路、國際市場、樂天百貨光復店(狂逛大創與超市)。晚餐在南浦蔘雞湯享用熱騰騰的雞湯。",
-        address: "부산광역시 중구 남포길 16-1 (남포삼계탕)",
-        note: "【推薦】樂天百貨 11 樓頂樓有免費花園，是看「影島大橋」的絕佳私房景點！<br>【晚餐】南浦蔘雞湯 (남포삼계탕) 擁有數十年歷史，雞肉軟嫩、糯米香濃，附人蔘酒！",
-        mapLinkKakao: "https://map.kakao.com/?q=부산광역시 중구 남포길 16-1",
-        mapLinkNaver: "https://map.naver.com/v5/search/부산광역시 중구 남포길 16-1",
-        estimatedCost: 45000,
-        costLabel: "預估晚餐及逛街花費"
-      },
-      {
-        id: "spot-15",
-        timeStart: "20:00",
-        timeEnd: "20:30",
-        title: "回程：南浦洞 ➔ 廣安里 🚕",
-        desc: "搭乘計程車返回廣安里住宿，為一日行程劃下句點。",
-        address: "부산 수영구 광안해변로278번길 42 (H Avenue Hotel)",
-        note: "【交通】強烈建議直接搭乘計程車直達廣安里 (約 25 分鐘，行經廣安大橋欣賞夜景，預估車資 ₩15,000)。",
-        mapLinkKakao: "https://map.kakao.com/?q=부산 수영구 광안해변로278번길 42",
-        mapLinkNaver: "https://map.naver.com/v5/search/부산 수영구 광안해변로278번길 42",
-        estimatedCost: 15000,
-        costLabel: "回程計程車資"
-      }
-    ];
-
-    // Simulation variables
-    let isSimulation = false;
-    let simulatedMinutes = 480; // Start at 08:00 (8 * 60)
-    let simulationInterval = null;
-    let lastActiveSpotId = null;
-
-    // Local Storage State Management
-    let userExpenses = {};
-    let completedSpots = {};
 
     // ------------------ INITIALIZE APP ------------------
     window.addEventListener('DOMContentLoaded', () => {
@@ -466,7 +770,8 @@
       // 2. Fetch Currency Rate
       fetchLatestRate();
       
-      // 3. Render Schedule
+      // 3. Render Hotel Card & Schedule
+      renderHotelCard();
       renderItinerary();
       
       // 4. Start Time ticking loop
@@ -476,6 +781,13 @@
     // Load Local Storage State
     function loadSavedState() {
       try {
+        const savedDay = localStorage.getItem('busan_current_day');
+        if (savedDay && itineraryData[savedDay]) {
+          currentDay = savedDay;
+          const selectElem = document.getElementById('day-select-dropdown');
+          if (selectElem) selectElem.value = currentDay;
+        }
+
         const expenses = localStorage.getItem('busan_expenses');
         if (expenses) userExpenses = JSON.parse(expenses);
 
@@ -497,8 +809,93 @@
       }
     }
 
+    // Switch Itinerary Day
+    function switchDay(dayKey) {
+      if (!itineraryData[dayKey]) return;
+      currentDay = dayKey;
+      localStorage.setItem('busan_current_day', dayKey);
+      
+      renderHotelCard();
+      renderItinerary();
+      updateTimelineStates();
+      scrollToCurrentActiveEvent();
+    }
+
+    // Render Hotel Accommodation Card
+    function renderHotelCard() {
+      const container = document.getElementById('hotel-card-container');
+      const hotel = hotelData[currentDay];
+      if (!hotel) {
+        container.style.display = 'none';
+        return;
+      }
+      container.style.display = 'block';
+      const cleanAddr = hotel.address ? hotel.address.split('(')[0].trim() : '';
+      const kakaoUrl = `https://map.kakao.com/link/search/${encodeURIComponent(cleanAddr)}`;
+      const naverUrl = `https://map.naver.com/v5/search/${encodeURIComponent(cleanAddr)}`;
+
+      container.innerHTML = `
+        <div class="hotel-card-title">
+          <span><i class="fa-solid fa-hotel"></i> ${hotel.name}</span>
+          <span style="font-size: 0.68rem; font-weight: normal; opacity: 0.85;">住宿資訊</span>
+        </div>
+        <div class="hotel-card-body">
+          <div>${hotel.note}</div>
+          <div class="hotel-addr-box">
+            <span style="font-weight: 700; color: #1e40af;"><i class="fa-solid fa-location-dot"></i> ${hotel.address}</span>
+            <div style="display: flex; gap: 0.35rem; align-items: center;">
+              <button onclick="copyAddressText('${cleanAddr}', this)" class="copy-addr-btn" style="padding: 0.15rem 0.4rem; font-size: 0.65rem;">
+                <i class="fa-solid fa-copy"></i> 複製
+              </button>
+              <a href="${kakaoUrl}" target="_blank" class="action-link" style="padding: 0.15rem 0.4rem; font-size: 0.65rem;">Kakao</a>
+              <a href="${naverUrl}" target="_blank" class="action-link" style="padding: 0.15rem 0.4rem; font-size: 0.65rem;">Naver</a>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Helper for direct address text copying
+    function copyAddressText(addrText, btn) {
+      const showSuccess = () => {
+        const originalHTML = btn.innerHTML;
+        btn.innerHTML = '<i class="fa-solid fa-check"></i> 已複製!';
+        btn.style.background = '#16a34a';
+        btn.style.color = '#ffffff';
+        setTimeout(() => {
+          btn.innerHTML = originalHTML;
+          btn.style.background = '';
+          btn.style.color = '';
+        }, 1500);
+      };
+      const fallbackCopy = () => {
+        try {
+          const tempInput = document.createElement('textarea');
+          tempInput.value = addrText;
+          tempInput.style.position = 'fixed';
+          tempInput.style.opacity = '0';
+          document.body.appendChild(tempInput);
+          tempInput.focus();
+          tempInput.select();
+          document.execCommand('copy');
+          document.body.removeChild(tempInput);
+          showSuccess();
+        } catch (e) {
+          console.error('Copy failed', e);
+        }
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(addrText).then(showSuccess).catch(fallbackCopy);
+      } else {
+        fallbackCopy();
+      }
+    }
+
     // ------------------ CURRENCY LOGIC ------------------
     async function fetchLatestRate() {
+      const btn = document.getElementById('refresh-rate-btn');
+      if (btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 刷新中...';
+
       try {
         const response = await fetch(apiURL);
         if (!response.ok) throw new Error('API request failed');
@@ -508,18 +905,29 @@
           currentRate = data.rates.KRW;
           rateInput.value = currentRate.toFixed(2);
           
-          const timeStr = new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' });
-          rateStatus.innerHTML = `<i class="fa-solid fa-circle-check" style="color: #4ade80;"></i> 即時匯率 (1 TWD = ${currentRate.toFixed(2)} KRW) 更新於 ${timeStr}`;
+          const bannerVal = document.getElementById('banner-rate-display');
+          if (bannerVal) bannerVal.innerText = currentRate.toFixed(2);
           
           updateCalculations('twd');
+
+          if (btn) {
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> 已更新!';
+            setTimeout(() => {
+              btn.innerHTML = '<i class="fa-solid fa-rotate"></i> 刷新匯率';
+            }, 1500);
+          }
         } else {
           throw new Error('Invalid rate format');
         }
       } catch (error) {
-        console.warn('Rate fetch error, using offline default:', error);
+        console.warn('Rate fetch error, using current rate:', error);
         rateInput.value = currentRate.toFixed(2);
-        rateStatus.innerHTML = `<i class="fa-solid fa-circle-exclamation" style="color: #fbbf24;"></i> 離線模式 (預設匯率 1 TWD = ${currentRate.toFixed(1)} KRW)`;
+        const bannerVal = document.getElementById('banner-rate-display');
+        if (bannerVal) bannerVal.innerText = currentRate.toFixed(2);
         updateCalculations('twd');
+        if (btn) {
+          btn.innerHTML = '<i class="fa-solid fa-rotate"></i> 刷新匯率';
+        }
       }
     }
 
@@ -534,7 +942,6 @@
       } else {
         document.getElementById('tab-itinerary').classList.add('active');
         document.getElementById('content-itinerary').classList.add('active');
-        // Recalculate spending widgets based on current rate
         updateAllExpensesUI();
         recalculateTotals();
         scrollToCurrentActiveEvent();
@@ -620,8 +1027,9 @@
     function renderItinerary() {
       const container = document.getElementById('timeline-container');
       let html = '';
+      const currentList = itineraryData[currentDay] || [];
 
-      itinerary.forEach((spot) => {
+      currentList.forEach((spot) => {
         const isDone = completedSpots[spot.id] ? 'checked' : '';
         const savedCost = userExpenses[spot.id] !== undefined ? userExpenses[spot.id] : '';
         const cardClass = completedSpots[spot.id] ? 'completed' : '';
@@ -739,44 +1147,11 @@
 
     // Copy Korean Address to clipboard with iOS Safari Fallback
     function copyAddress(id, btn) {
-      const spot = itinerary.find(s => s.id === id);
+      const currentList = itineraryData[currentDay] || [];
+      const spot = currentList.find(s => s.id === id);
       if (spot && spot.address) {
         const cleanAddr = spot.address.split('(')[0].trim();
-        
-        const showSuccess = () => {
-          const originalHTML = btn.innerHTML;
-          btn.innerHTML = '<i class="fa-solid fa-check"></i> 已複製!';
-          btn.style.background = '#16a34a';
-          btn.style.color = '#ffffff';
-          setTimeout(() => {
-            btn.innerHTML = originalHTML;
-            btn.style.background = '';
-            btn.style.color = '';
-          }, 1500);
-        };
-
-        const fallbackCopy = () => {
-          try {
-            const tempInput = document.createElement('textarea');
-            tempInput.value = cleanAddr;
-            tempInput.style.position = 'fixed';
-            tempInput.style.opacity = '0';
-            document.body.appendChild(tempInput);
-            tempInput.focus();
-            tempInput.select();
-            document.execCommand('copy');
-            document.body.removeChild(tempInput);
-            showSuccess();
-          } catch (e) {
-            console.error('Copy failed', e);
-          }
-        };
-
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(cleanAddr).then(showSuccess).catch(fallbackCopy);
-        } else {
-          fallbackCopy();
-        }
+        copyAddressText(cleanAddr, btn);
       }
     }
 
@@ -790,20 +1165,20 @@
       }
       
       localStorage.setItem('busan_expenses', JSON.stringify(userExpenses));
-      
-      // Update specific converted item
       updateSingleExpenseUI(id);
       recalculateTotals();
     }
 
     // Update TWD conversion label inside single timeline item
     function updateSingleExpenseUI(id) {
-      const spot = itinerary.find(s => s.id === id);
+      const currentList = itineraryData[currentDay] || [];
+      const spot = currentList.find(s => s.id === id);
       if (!spot) return;
 
       const input = document.getElementById(`cost-input-${id}`);
       const convertedDisplay = document.getElementById(`converted-twd-${id}`);
-      
+      if (!input || !convertedDisplay) return;
+
       const krwVal = parseFloat(input.value);
       if (!isNaN(krwVal)) {
         const twdVal = Math.round(krwVal / currentRate);
@@ -817,49 +1192,81 @@
 
     // Update all conversions in timeline list
     function updateAllExpensesUI() {
-      itinerary.forEach(spot => {
+      const currentList = itineraryData[currentDay] || [];
+      currentList.forEach(spot => {
         updateSingleExpenseUI(spot.id);
       });
     }
 
-    // Aggregate budgets vs spent totals
+    // Aggregate budgets vs spent totals (for currentDay AND for entire 6-day trip)
     function recalculateTotals() {
-      let estTotalKrw = 0;
-      let actTotalKrw = 0;
+      // 1. Current Day Totals
+      const currentList = itineraryData[currentDay] || [];
+      let dayEstKrw = 0;
+      let dayActKrw = 0;
 
-      itinerary.forEach(spot => {
-        estTotalKrw += spot.estimatedCost;
+      currentList.forEach(spot => {
+        dayEstKrw += spot.estimatedCost;
         if (userExpenses[spot.id] !== undefined) {
-          actTotalKrw += userExpenses[spot.id];
+          dayActKrw += userExpenses[spot.id];
         }
       });
 
-      const estTotalTwd = Math.round(estTotalKrw / currentRate);
-      const actTotalTwd = Math.round(actTotalKrw / currentRate);
+      const dayEstTwd = Math.round(dayEstKrw / currentRate);
+      const dayActTwd = Math.round(dayActKrw / currentRate);
 
-      document.getElementById('budget-estimated').innerText = `₩ ${estTotalKrw.toLocaleString()}`;
-      document.getElementById('budget-estimated-twd').innerText = `(NT$ ${estTotalTwd.toLocaleString()})`;
+      const budgetEstElem = document.getElementById('budget-estimated');
+      const budgetEstTwdElem = document.getElementById('budget-estimated-twd');
+      const budgetActElem = document.getElementById('budget-actual');
+      const budgetActTwdElem = document.getElementById('budget-actual-twd');
 
-      document.getElementById('budget-actual').innerText = `₩ ${actTotalKrw.toLocaleString()}`;
-      document.getElementById('budget-actual-twd').innerText = `(NT$ ${actTotalTwd.toLocaleString()})`;
+      if (budgetEstElem) budgetEstElem.innerText = `₩ ${dayEstKrw.toLocaleString()}`;
+      if (budgetEstTwdElem) budgetEstTwdElem.innerText = `(NT$ ${dayEstTwd.toLocaleString()})`;
+      if (budgetActElem) budgetActElem.innerText = `₩ ${dayActKrw.toLocaleString()}`;
+      if (budgetActTwdElem) budgetActTwdElem.innerText = `(NT$ ${dayActTwd.toLocaleString()})`;
 
-      // Fill budget percentage bar
       const fillBar = document.getElementById('budget-fill');
-      if (estTotalKrw > 0) {
-        let percent = (actTotalKrw / estTotalKrw) * 100;
-        fillBar.style.width = `${Math.min(percent, 100)}%`;
-        
-        // Color shifts based on limits
-        if (percent > 100) {
-          fillBar.style.background = 'var(--accent-gradient)';
-        } else if (percent > 85) {
-          fillBar.style.background = 'var(--warning-gradient)';
+      if (fillBar) {
+        if (dayEstKrw > 0) {
+          let percent = (dayActKrw / dayEstKrw) * 100;
+          fillBar.style.width = `${Math.min(percent, 100)}%`;
+          if (percent > 100) {
+            fillBar.style.background = 'var(--accent-gradient)';
+          } else if (percent > 85) {
+            fillBar.style.background = 'var(--warning-gradient)';
+          } else {
+            fillBar.style.background = 'var(--success-gradient)';
+          }
         } else {
-          fillBar.style.background = 'var(--success-gradient)';
+          fillBar.style.width = '0%';
         }
-      } else {
-        fillBar.style.width = '0%';
       }
+
+      // 2. 6-Day Entire Trip Totals
+      let tripEstKrw = 0;
+      let tripActKrw = 0;
+
+      Object.values(itineraryData).forEach(daySpots => {
+        daySpots.forEach(spot => {
+          tripEstKrw += spot.estimatedCost;
+          if (userExpenses[spot.id] !== undefined) {
+            tripActKrw += userExpenses[spot.id];
+          }
+        });
+      });
+
+      const tripEstTwd = Math.round(tripEstKrw / currentRate);
+      const tripActTwd = Math.round(tripActKrw / currentRate);
+
+      const tripEstElem = document.getElementById('trip-estimated');
+      const tripEstTwdElem = document.getElementById('trip-estimated-twd');
+      const tripActElem = document.getElementById('trip-actual');
+      const tripActTwdElem = document.getElementById('trip-actual-twd');
+
+      if (tripEstElem) tripEstElem.innerText = `₩ ${tripEstKrw.toLocaleString()}`;
+      if (tripEstTwdElem) tripEstTwdElem.innerText = `(NT$ ${tripEstTwd.toLocaleString()})`;
+      if (tripActElem) tripActElem.innerText = `₩ ${tripActKrw.toLocaleString()}`;
+      if (tripActTwdElem) tripActTwdElem.innerText = `(NT$ ${tripActTwd.toLocaleString()})`;
     }
 
     // ------------------ TIME SCHEDULER & TICKER ------------------
@@ -886,13 +1293,16 @@
         currentMin = now.getHours() * 60 + now.getMinutes();
       }
 
+      const currentList = itineraryData[currentDay] || [];
+      if (currentList.length === 0) return;
+
       // Track active spot
       let activeSpot = null;
       let nextSpot = null;
       let activeCardElement = null;
 
-      // Loop itinerary to classify spot states
-      itinerary.forEach((spot, index) => {
+      // Loop current day itinerary to classify spot states
+      currentList.forEach((spot, index) => {
         const startMin = getMinutesOfDay(spot.timeStart);
         const endMin = getMinutesOfDay(spot.timeEnd);
         const card = document.getElementById(`card-${spot.id}`);
@@ -906,8 +1316,8 @@
           card.classList.add('active');
           activeSpot = spot;
           activeCardElement = card;
-          if (index < itinerary.length - 1) {
-            nextSpot = itinerary[index + 1];
+          if (index < currentList.length - 1) {
+            nextSpot = currentList[index + 1];
           }
         }
       });
@@ -916,6 +1326,7 @@
       const headerTitle = document.getElementById('current-title');
       const headerNext = document.getElementById('current-next');
       const headerProgressFill = document.getElementById('current-progress');
+      if (!headerTitle || !headerNext || !headerProgressFill) return;
 
       if (activeSpot) {
         const startMin = getMinutesOfDay(activeSpot.timeStart);
@@ -924,11 +1335,9 @@
         const progressMin = currentMin - startMin;
         const progressPercentage = (progressMin / totalDuration) * 100;
 
-        // Render current title
         const minsLeft = endMin - currentMin;
         headerTitle.innerHTML = `<span style="font-weight:900;">進行中:</span> ${activeSpot.title.split('：')[1] || activeSpot.title} <span style="font-size:0.75rem; background:rgba(255,255,255,0.25); padding: 0.1rem 0.35rem; border-radius: 4px; font-weight:700;">剩餘 ${minsLeft} 分鐘</span>`;
         
-        // Render next title
         if (nextSpot) {
           headerNext.innerText = `下一站 (${nextSpot.timeStart}): ${nextSpot.title.split('：')[1] || nextSpot.title}`;
         } else {
@@ -937,15 +1346,13 @@
 
         headerProgressFill.style.width = `${progressPercentage}%`;
 
-        // Check if active spot changed to perform smooth scroll
         if (activeSpot.id !== lastActiveSpotId) {
           lastActiveSpotId = activeSpot.id;
           scrollToCurrentActiveEvent();
         }
       } else {
-        // Outside scheduled range
-        const firstStart = getMinutesOfDay(itinerary[0].timeStart);
-        const lastEnd = getMinutesOfDay(itinerary[itinerary.length - 1].timeEnd);
+        const firstStart = getMinutesOfDay(currentList[0].timeStart);
+        const lastEnd = getMinutesOfDay(currentList[currentList.length - 1].timeEnd);
 
         if (currentMin < firstStart) {
           const minsToStart = firstStart - currentMin;
@@ -953,10 +1360,10 @@
           const remMins = minsToStart % 60;
           const waitStr = hoursToStart > 0 ? `${hoursToStart} 小時 ${remMins} 分鐘` : `${remMins} 分鐘`;
           
-          headerTitle.innerText = `☀️ 今日行程尚未開始！`;
-          headerNext.innerText = `首站早餐將在 08:00 開始 (距離還有 ${waitStr})`;
+          headerTitle.innerText = `☀️ 當日行程尚未開始！`;
+          headerNext.innerText = `首站將在 ${currentList[0].timeStart} 開始 (距離還有 ${waitStr})`;
         } else {
-          headerTitle.innerText = `🌙 今日行程已圓滿結束！`;
+          headerTitle.innerText = `🌙 當日行程已圓滿結束！`;
           headerNext.innerText = `願您在釜山玩得愉快，今晚做個好夢～`;
         }
         headerProgressFill.style.width = '0%';

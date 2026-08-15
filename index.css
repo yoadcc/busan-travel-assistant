@@ -135,6 +135,24 @@ body {
   color: var(--white);
   backdrop-blur: 4px;
 }
+.refresh-rate-btn {
+  background: rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: var(--white);
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.7rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: all var(--transition-fast);
+  margin-left: 0.4rem;
+}
+.refresh-rate-btn:hover {
+  background: rgba(255, 255, 255, 0.45);
+}
 
 /* Navigation Tabs */
 .app-tabs {
@@ -479,6 +497,104 @@ details[open] .details-summary i {
   width: 0%;
   border-radius: 10px;
   transition: width 0.5s ease-out;
+}
+
+/* Day Selector Panel & Dropdown */
+.day-selector-panel {
+  background: var(--white);
+  border: 2px solid var(--primary-color);
+  border-radius: var(--radius-lg);
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+}
+.day-selector-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.day-selector-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.day-select-dropdown {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-main);
+  background: #f0f9ff;
+  border: 1.5px solid #0284c7;
+  border-radius: var(--radius-md);
+  outline: none;
+  cursor: pointer;
+  appearance: auto;
+}
+
+/* Hotel Accommodation Card */
+.hotel-card {
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  border: 1px solid #bfdbfe;
+  border-radius: var(--radius-lg);
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.25rem;
+  color: #1e3a8a;
+  box-shadow: var(--shadow-sm);
+}
+.hotel-card-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.hotel-card-body {
+  font-size: 0.72rem;
+  line-height: 1.4;
+}
+.hotel-addr-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.75);
+  padding: 0.35rem 0.6rem;
+  border-radius: var(--radius-sm);
+  margin-top: 0.35rem;
+  gap: 0.5rem;
+}
+
+/* Total 6-Day Budget Details */
+.total-budget-details {
+  background: var(--white);
+  border: 1px solid #cbd5e1;
+  border-radius: var(--radius-lg);
+  margin-top: 1rem;
+  overflow: hidden;
+}
+.total-budget-summary {
+  padding: 0.65rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-main);
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+  list-style: none;
+  background: #f8fafc;
+}
+.total-budget-summary::-webkit-details-marker {
+  display: none;
+}
+.total-budget-content {
+  padding: 0.75rem 1rem 1rem 1rem;
+  border-top: 1px dashed #cbd5e1;
 }
 
 /* Time Simulation Bar */

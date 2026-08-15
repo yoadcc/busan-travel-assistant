@@ -1,4 +1,4 @@
-const CACHE_NAME = 'busan-travel-v3';
+const CACHE_NAME = 'busan-travel-v5';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
