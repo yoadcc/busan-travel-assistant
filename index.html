@@ -626,6 +626,15 @@
         const savedCost = userExpenses[spot.id] !== undefined ? userExpenses[spot.id] : '';
         const cardClass = completedSpots[spot.id] ? 'completed' : '';
 
+        // Clean Korean address & generate official Mobile Kakao/Naver Map search deep links
+        const cleanAddr = spot.address ? spot.address.split('(')[0].trim() : '';
+        const kakaoUrl = cleanAddr 
+          ? `https://map.kakao.com/link/search/${encodeURIComponent(cleanAddr)}` 
+          : spot.mapLinkKakao;
+        const naverUrl = cleanAddr 
+          ? `https://map.naver.com/v5/search/${encodeURIComponent(cleanAddr)}` 
+          : spot.mapLinkNaver;
+
         html += `
           <div class="event-card ${cardClass}" id="card-${spot.id}">
             <div class="timeline-dot"></div>
@@ -664,10 +673,10 @@
             </div>
             
             <div class="event-actions">
-              <a href="${spot.mapLinkKakao}" target="_blank" class="action-link">
+              <a href="${kakaoUrl}" target="_blank" class="action-link">
                 <i class="fa-solid fa-map-pin"></i> Kakao Map
               </a>
-              <a href="${spot.mapLinkNaver}" target="_blank" class="action-link">
+              <a href="${naverUrl}" target="_blank" class="action-link">
                 <i class="fa-solid fa-compass"></i> Naver Map
               </a>
             </div>
@@ -721,13 +730,13 @@
       localStorage.setItem('busan_completed', JSON.stringify(completedSpots));
     }
 
-    // Copy Korean Address to clipboard
+    // Copy Korean Address to clipboard with iOS Safari Fallback
     function copyAddress(id, btn) {
       const spot = itinerary.find(s => s.id === id);
       if (spot && spot.address) {
-        // Strip parenthetical Chinese notes from address for clean copy if needed, or copy clean address
         const cleanAddr = spot.address.split('(')[0].trim();
-        navigator.clipboard.writeText(cleanAddr).then(() => {
+        
+        const showSuccess = () => {
           const originalHTML = btn.innerHTML;
           btn.innerHTML = '<i class="fa-solid fa-check"></i> 已複製!';
           btn.style.background = '#16a34a';
@@ -737,9 +746,30 @@
             btn.style.background = '';
             btn.style.color = '';
           }, 1500);
-        }).catch(err => {
-          console.warn('Clipboard write failed:', err);
-        });
+        };
+
+        const fallbackCopy = () => {
+          try {
+            const tempInput = document.createElement('textarea');
+            tempInput.value = cleanAddr;
+            tempInput.style.position = 'fixed';
+            tempInput.style.opacity = '0';
+            document.body.appendChild(tempInput);
+            tempInput.focus();
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            showSuccess();
+          } catch (e) {
+            console.error('Copy failed', e);
+          }
+        };
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(cleanAddr).then(showSuccess).catch(fallbackCopy);
+        } else {
+          fallbackCopy();
+        }
       }
     }
 
