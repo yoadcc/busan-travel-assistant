@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>釜山旅遊特助 ⇄ 即時匯率與行程規劃</title>
+  <!-- Custom CSS Design System -->
+  <link rel="stylesheet" href="index.css">
+  <!-- FontAwesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- App Container -->
+  <div class="app-container">
+    
+    <!-- Header -->
+    <header class="app-header">
+      <h1>釜山旅遊特助 🇰🇷</h1>
+      <p>您的專屬匯率換算與一日行程導航神器</p>
+      
+      <!-- Quick Info Rate Tag -->
+      <div id="rate-status" class="rate-banner">
+        <i class="fa-solid fa-spinner fa-spin"></i> 正在獲取即時匯率...
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="app-tabs">
+      <button id="tab-calc" class="tab-btn active" onclick="switchTab('calc')">
+        <i class="fa-solid fa-calculator"></i> 匯率換算
+      </button>
+      <button id="tab-itinerary" class="tab-btn" onclick="switchTab('itinerary')">
+        <i class="fa-solid fa-map-location-dot"></i> 釜山一日遊
+      </button>
+    </nav>
+
+    <!-- ================= TAB 1: CURRENCY CALCULATOR ================= -->
+    <main id="content-calc" class="tab-content active">
+      <!-- TWD Input -->
+      <div class="form-group">
+        <div class="form-label-row">
+          <label for="twd-input" class="form-label">
+            <span>🇹🇼</span> 新台幣 (TWD)
+          </label>
+          <button onclick="clearValue('twd')" class="clear-btn">
+            <i class="fa-solid fa-trash-can"></i> 清除
+          </button>
+        </div>
+        <div class="input-wrapper">
+          <span class="input-prefix">NT$</span>
+          <input 
+            type="number" 
+            id="twd-input" 
+            placeholder="請輸入台幣金額" 
+            oninput="updateCalculations('twd')"
+            class="main-input"
+          >
+        </div>
+        <!-- Quick add -->
+        <div class="quick-btns">
+          <button onclick="addValue('twd', 100)" class="quick-btn">+100</button>
+          <button onclick="addValue('twd', 500)" class="quick-btn">+500</button>
+          <button onclick="addValue('twd', 1000)" class="quick-btn">+1,000</button>
+          <button onclick="addValue('twd', 5000)" class="quick-btn">+5,000</button>
+        </div>
+      </div>
+
+      <!-- Arrow Divider -->
+      <div style="text-align: center; margin: 1.25rem 0; color: var(--text-light);">
+        <i class="fa-solid fa-arrows-up-down text-lg"></i>
+      </div>
+
+      <!-- KRW Input -->
+      <div class="form-group">
+        <div class="form-label-row">
+          <label for="krw-input" class="form-label">
+            <span>🇰🇷</span> 韓元 (KRW)
+          </label>
+          <button onclick="clearValue('krw')" class="clear-btn">
+            <i class="fa-solid fa-trash-can"></i> 清除
+          </button>
+        </div>
+        <div class="input-wrapper">
+          <span class="input-prefix">₩</span>
+          <input 
+            type="number" 
+            id="krw-input" 
+            placeholder="請輸入韓元金額" 
+            oninput="updateCalculations('krw')"
+            class="main-input"
+          >
+        </div>
+        <!-- Quick add -->
+        <div class="quick-btns">
+          <button onclick="addValue('krw', 1000)" class="quick-btn">+1,000</button>
+          <button onclick="addValue('krw', 10000)" class="quick-btn">+10,000</button>
+          <button onclick="addValue('krw', 50000)" class="quick-btn">+50,000</button>
+          <button onclick="addValue('krw', 100000)" class="quick-btn">+100,000</button>
+        </div>
+      </div>
+
+      <!-- Advanced Settings Accordion -->
+      <details class="details-dropdown">
+        <summary class="details-summary">
+          <span>⚙️ 匯率設定 (可手動修改換匯匯率)</span>
+          <i class="fa-solid fa-chevron-down"></i>
+        </summary>
+        <div class="details-content">
+          <div class="rate-setter">
+            <span>1 TWD = </span>
+            <input 
+              type="number" 
+              step="0.01" 
+              id="rate-input" 
+              value="44.10" 
+              oninput="onRateChange()"
+            >
+            <span>KRW</span>
+          </div>
+          <p style="font-size: 0.65rem; color: var(--text-muted); line-height: 1.4;">
+            提示：釜山南浦洞民間換錢所（如友利、映真）匯率通常優於刷卡。您可以手動輸入在當地實際換到的匯率，讓計算更精準！
+          </p>
+        </div>
+      </details>
+
+      <!-- Reference Tables -->
+      <div class="ref-tables-section">
+        <h3 class="ref-section-title">
+          <i class="fa-solid fa-table"></i> 常用快速換算對照表
+        </h3>
+        <div class="ref-tables-grid">
+          <!-- TWD -> KRW -->
+          <div class="ref-table-box">
+            <div class="ref-table-header twd-krw">台幣 ➔ 韓元</div>
+            <table class="ref-table">
+              <tbody id="twd-ref-body">
+                <!-- Dynamic TWD presets -->
+              </tbody>
+            </table>
+          </div>
+          <!-- KRW -> TWD -->
+          <div class="ref-table-box">
+            <div class="ref-table-header krw-twd">韓元 ➔ 台幣</div>
+            <table class="ref-table">
+              <tbody id="krw-ref-body">
+                <!-- Dynamic KRW presets -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ================= TAB 2: ITINERARY PLANNER ================= -->
+    <main id="content-itinerary" class="tab-content">
+      
+      <!-- Current Schedule Dashboard -->
+      <section class="current-panel">
+        <div class="current-tag">
+          <span class="pulse-badge"></span> 目前行程狀態
+        </div>
+        <div id="current-title" class="current-title">載入中...</div>
+        <div id="current-next" class="current-next">下個景點: 載入中...</div>
+        <div class="progress-bar-container">
+          <div id="current-progress" class="progress-bar-fill"></div>
+        </div>
+      </section>
+
+      <!-- Time Simulation Controls -->
+      <section class="sim-controls">
+        <div class="sim-header">
+          <div class="sim-title">
+            <i class="fa-solid fa-clock"></i> 時間模式設定
+          </div>
+          <button id="sim-toggle-btn" onclick="toggleSimulation()" class="sim-toggle">
+            切換模擬時間
+          </button>
+        </div>
+        <div class="sim-slider-row">
+          <input 
+            type="range" 
+            id="sim-slider" 
+            min="420" 
+            max="1290" 
+            step="5" 
+            value="480" 
+            oninput="onSimulationSliderChange(this.value)"
+            class="sim-slider"
+            disabled
+          >
+          <div id="sim-time-display" class="sim-time-display">08:00</div>
+        </div>
+      </section>
+
+      <!-- Scrollable Itinerary Timeline -->
+      <div class="timeline" id="timeline-container">
+        <!-- Dynamic timeline events will be generated here -->
+      </div>
+
+      <!-- Budget Aggregator Dashboard -->
+      <section class="budget-summary-card">
+        <h3 class="budget-summary-title">
+          <i class="fa-solid fa-sack-dollar"></i> 今日預算執行分析 (KRW/TWD)
+        </h3>
+        <div class="budget-grid">
+          <div class="budget-stat">
+            <span class="budget-stat-label">預估總預算</span>
+            <span id="budget-estimated" class="budget-stat-val krw">₩ 0</span>
+            <span id="budget-estimated-twd" class="budget-stat-label" style="margin-top: 0.1rem;">(NT$ 0)</span>
+          </div>
+          <div class="budget-stat">
+            <span class="budget-stat-label">實際總花費</span>
+            <span id="budget-actual" class="budget-stat-val twd">₩ 0</span>
+            <span id="budget-actual-twd" class="budget-stat-label" style="margin-top: 0.1rem; color: var(--secondary-color); font-weight: 700;">(NT$ 0)</span>
+          </div>
+        </div>
+        <div class="budget-percentage-bar">
+          <div id="budget-fill" class="budget-percentage-fill"></div>
+        </div>
+        <p class="budget-tips">
+          💡 勾選行程右側的核取方塊可標記為「已完成」，輸入實際支出可即時更新帳本。
+        </p>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      由 AI 助手為您的釜山之旅量身打造 ❤️<br>
+      保存網頁至手機桌面，隨時隨地離線瀏覽與記帳。
+    </footer>
+  </div>
+
+  <!-- JavaScript Logic -->
+  <script>
+    // Constants & Global State
+    let currentRate = 44.10;
+    const apiURL = 'https://open.er-api.com/v6/latest/TWD';
+    
+    // DOM Elements
+    const twdInput = document.getElementById('twd-input');
+    const krwInput = document.getElementById('krw-input');
+    const rateInput = document.getElementById('rate-input');
+    const rateStatus = document.getElementById('rate-status');
+    
+    // Itinerary Data Array
+    const itinerary = [
+      {
+        id: "spot-1",
+        timeStart: "08:00",
+        timeEnd: "09:00",
+        title: "早餐：ALL SUNDAY 貝果 廣安店 🥯",
+        desc: "廣安里必吃超人氣貝果，口感扎實Q彈，起司抹醬大推！",
+        note: "【推薦】熱門口味容易完售，建議踩點或提早抵達挑選好口味。",
+        mapLinkKakao: "https://map.kakao.com/?q=ALL SUNDAY 貝果 廣安店",
+        mapLinkNaver: "https://map.naver.com/v5/search/ALL SUNDAY 貝果 廣安店",
+        estimatedCost: 10000,
+        costLabel: "貝果早餐費"
+      },
+      {
+        id: "spot-2",
+        timeStart: "09:00",
+        timeEnd: "09:35",
+        title: "轉場：廣安里 ➔ 甘川洞 🚕",
+        desc: "搭乘計程車，從廣安里直奔甘川洞文化村。",
+        note: "【交通】建議直達計程車以節省體力 (車程約 35 分鐘，預估車資 ₩18,000)。",
+        mapLinkKakao: "https://map.kakao.com/?q=甘川洞文化村",
+        mapLinkNaver: "https://map.naver.com/v5/search/甘川洞文化村",
+        estimatedCost: 18000,
+        costLabel: "預估計程車資"
+      },
+      {
+        id: "spot-3",
+        timeStart: "09:35",
+        timeEnd: "11:30",
+        title: "景點：甘川洞文化村 🎨",
+        desc: "探索彩色壁畫村，尋找小王子與狐狸合照，到景觀咖啡廳俯瞰村落。",
+        note: "【體驗】甘川洞手翻書 Flipbook Studio - Busan pass<br>【提醒】手翻書：8秒鐘的連續動態錄影。建議事先想好 2至3個幅度大且連貫的動作(如：揮手 ➔ 比愛心 ➔ 親一下)，錄製效果最生動！",
+        mapLinkKakao: "https://map.kakao.com/?q=甘川洞 Flipbook Studio",
+        mapLinkNaver: "https://map.naver.com/v5/search/甘川洞 Flipbook Studio",
+        estimatedCost: 0,
+        costLabel: "手翻書 (Busan Pass 免費)"
+      },
+      {
+        id: "spot-4",
+        timeStart: "11:30",
+        timeEnd: "11:45",
+        title: "轉場：甘川洞 ➔ 松島 🚕",
+        desc: "前往松島午餐餐廳「海底貝殼王國」。",
+        note: "【交通】計程車車程極短，約 12-15 分鐘。預估車資約 ₩6,000。",
+        mapLinkKakao: "https://map.kakao.com/?q=松島 海底貝殼王國",
+        mapLinkNaver: "https://map.naver.com/v5/search/松島 海底貝殼王國",
+        estimatedCost: 6000,
+        costLabel: "預估計程車資"
+      },
+      {
+        id: "spot-5",
+        timeStart: "11:45",
+        timeEnd: "13:30",
+        title: "午餐：海底貝殼王國（烤扇貝） 🦪",
+        desc: "松島經典海邊美味！享用炭火現烤、放滿起司的新鮮扇貝。",
+        note: "【推薦】烤扇貝加上起司與洋蔥調味，最後配上海苔炒飯堪稱一絕！",
+        mapLinkKakao: "https://map.kakao.com/?q=海底貝殼王國",
+        mapLinkNaver: "https://map.naver.com/v5/search/海底貝殼王國",
+        estimatedCost: 60000,
+        costLabel: "雙人烤扇貝餐費"
+      },
+      {
+        id: "spot-6",
+        timeStart: "13:30",
+        timeEnd: "13:40",
+        title: "轉場：步行前往纜車站 🚶",
+        desc: "從餐廳出發移動至「松島灣纜車站」。",
+        note: "【交通】可散步慢慢沿海岸走（約 10 分鐘）或搭計程車（3分鐘，基本車資）。",
+        mapLinkKakao: "https://map.kakao.com/?q=松島灣纜車站",
+        mapLinkNaver: "https://map.naver.com/v5/search/松島灣纜車站",
+        estimatedCost: 0,
+        costLabel: "步行前往"
+      },
+      {
+        id: "spot-7",
+        timeStart: "13:40",
+        timeEnd: "14:20",
+        title: "景點：松島開卡與搭纜車 🚠",
+        desc: "使用 Busan Pass 兌換松島海上纜車門票，排隊搭乘水晶車廂跨海。",
+        note: "【提醒】週日下午排隊搭乘水晶車廂（透明地板）人潮眾多，請務必預留足夠候車排隊時間。",
+        mapLinkKakao: "https://map.kakao.com/?q=松島海上纜車",
+        mapLinkNaver: "https://map.naver.com/v5/search/松島海上纜車",
+        estimatedCost: 0,
+        costLabel: "海上纜車 (Busan Pass 免費)"
+      },
+      {
+        id: "spot-8",
+        timeStart: "14:20",
+        timeEnd: "14:50",
+        title: "景點：朝聖松島龍宮雲橋 🌉",
+        desc: "行走在網狀鏤空的雲橋上，感受海浪在腳下奔騰的震撼，眺望陡峭懸崖。",
+        note: "【注意】需現場自費 ₩1,000 (不含在Pass)。此處海風強勁，請留意保暖與隨身物品。<br>【路線】纜車下站 (SkyPark站) 出口直走是岩南公園，順著右手邊下坡小路走 5 分鐘即達雲橋售票處。",
+        mapLinkKakao: "https://map.kakao.com/?q=松島龍宮雲橋",
+        mapLinkNaver: "https://map.naver.com/v5/search/松島龍宮雲橋",
+        estimatedCost: 1000,
+        costLabel: "雲橋門票 (需自費)"
+      },
+      {
+        id: "spot-9",
+        timeStart: "14:50",
+        timeEnd: "15:10",
+        title: "拍照：岩南公園海岸木棧道 📸",
+        desc: "沿著雲橋旁的海岸懸崖木棧道漫步，拍攝極具張力的絕美海景合影。",
+        note: "【推薦】這段路程海景最颯、最開闊！大約走 10 分鐘拍完精華照片後原路折返。",
+        mapLinkKakao: "https://map.kakao.com/?q=岩南公園海岸木棧道",
+        mapLinkNaver: "https://map.naver.com/v5/search/岩南公園海岸木棧道",
+        estimatedCost: 0,
+        costLabel: "免費參觀"
+      },
+      {
+        id: "spot-10",
+        timeStart: "15:10",
+        timeEnd: "15:40",
+        title: "景點：纜車站頂樓與恐龍廣場 🦖",
+        desc: "回到纜車 SkyPark 站，上觀景台與小王子拍照，並在戶外看會發聲的動態恐龍。",
+        note: "【指南】直奔 SkyPark 站 3 樓觀景台拍小王子，之後到 1 樓廣場和高聳的巨大暴龍、翼龍合照。",
+        mapLinkKakao: "https://map.kakao.com/?q=松島 SkyPark 觀景台",
+        mapLinkNaver: "https://map.naver.com/v5/search/松島 SkyPark 觀景台",
+        estimatedCost: 0,
+        costLabel: "免費參觀"
+      },
+      {
+        id: "spot-11",
+        timeStart: "15:40",
+        timeEnd: "16:00",
+        title: "回程：搭乘回程纜車 🚠",
+        desc: "搭纜車返回松島灣站。在海中央迎接斜陽，欣賞波光粼粼的夕陽海景。",
+        note: "【提醒】同樣需排隊，接近黃昏時的海景搭配落日非常美麗，相機不要收！",
+        mapLinkKakao: "https://map.kakao.com/?q=松島海上纜車",
+        mapLinkNaver: "https://map.naver.com/v5/search/松島海上纜車",
+        estimatedCost: 0,
+        costLabel: "回程纜車"
+      },
+      {
+        id: "spot-12",
+        timeStart: "16:00",
+        timeEnd: "16:15",
+        title: "轉場：松島 ➔ 南浦洞 🚕",
+        desc: "從松島纜車站搭計程車移防南浦洞繁華商圈。",
+        note: "【交通】計程車車程約 10-15 分鐘，預估車資 ₩7,000。",
+        mapLinkKakao: "https://map.kakao.com/?q=南浦洞 光復路商圈",
+        mapLinkNaver: "https://map.naver.com/v5/search/南浦洞 光復路商圈",
+        estimatedCost: 7000,
+        costLabel: "預估計程車資"
+      },
+      {
+        id: "spot-13",
+        timeStart: "16:20",
+        timeEnd: "16:50",
+        title: "點心：BIFF 廣場吃黑糖餅 🥞",
+        desc: "朝聖釜山招牌點心「元祖黑糖餅」。",
+        note: "【美食】現炸熱騰騰金黃酥脆的黑糖餅塞滿堅果，非常排隊，但速度很快。建議一拿到就熱熱吃，極度美味！",
+        mapLinkKakao: "https://map.kakao.com/?q=南浦洞 BIFF 廣場",
+        mapLinkNaver: "https://map.naver.com/v5/search/南浦洞 BIFF 廣場",
+        estimatedCost: 4000,
+        costLabel: "黑糖餅點心費 (2人份)"
+      },
+      {
+        id: "spot-14",
+        timeStart: "16:50",
+        timeEnd: "20:00",
+        title: "逛街與晚餐：南浦洞精華區 🛍️",
+        desc: "大逛光復路、國際市場、樂天百貨光復店(狂逛大創與超市)。晚餐在南浦蔘雞湯享用熱騰騰的雞湯。",
+        note: "【推薦】樂天百貨 11 樓頂樓有免費花園，是看「影島大橋」的絕佳私房景點！<br>【晚餐】南浦蔘雞湯 (남포삼계탕) 擁有數十年歷史，雞肉軟嫩、糯米香濃，附人蔘酒！",
+        mapLinkKakao: "https://map.kakao.com/?q=南浦蔘雞湯",
+        mapLinkNaver: "https://map.naver.com/v5/search/南浦蔘雞湯",
+        estimatedCost: 45000,
+        costLabel: "預估晚餐及逛街花費"
+      },
+      {
+        id: "spot-15",
+        timeStart: "20:00",
+        timeEnd: "20:30",
+        title: "回程：南浦洞 ➔ 廣安里 🚕",
+        desc: "搭乘計程車返回廣安里住宿，為一日行程劃下句點。",
+        note: "【交通】強烈建議直接搭乘計程車直達廣安里 (約 25 分鐘，行經廣安大橋欣賞夜景，預估車資 ₩15,000)。",
+        mapLinkKakao: "https://map.kakao.com/?q=廣安里海水浴場",
+        mapLinkNaver: "https://map.naver.com/v5/search/廣安里海水浴場",
+        estimatedCost: 15000,
+        costLabel: "回程計程車資"
+      }
+    ];
+
+    // Simulation variables
+    let isSimulation = false;
+    let simulatedMinutes = 480; // Start at 08:00 (8 * 60)
+    let simulationInterval = null;
+    let lastActiveSpotId = null;
+
+    // Local Storage State Management
+    let userExpenses = {};
+    let completedSpots = {};
+
+    // ------------------ INITIALIZE APP ------------------
+    window.addEventListener('DOMContentLoaded', () => {
+      // 1. Load data from LocalStorage
+      loadSavedState();
+      
+      // 2. Fetch Currency Rate
+      fetchLatestRate();
+      
+      // 3. Render Schedule
+      renderItinerary();
+      
+      // 4. Start Time ticking loop
+      startClockTicker();
+    });
+
+    // Load Local Storage State
+    function loadSavedState() {
+      try {
+        const expenses = localStorage.getItem('busan_expenses');
+        if (expenses) userExpenses = JSON.parse(expenses);
+
+        const completed = localStorage.getItem('busan_completed');
+        if (completed) completedSpots = JSON.parse(completed);
+
+        const simSaved = localStorage.getItem('busan_is_sim');
+        const simMinSaved = localStorage.getItem('busan_sim_min');
+        if (simSaved === 'true') {
+          isSimulation = true;
+          simulatedMinutes = parseInt(simMinSaved) || 480;
+          document.getElementById('sim-slider').disabled = false;
+          document.getElementById('sim-slider').value = simulatedMinutes;
+          document.getElementById('sim-toggle-btn').classList.add('active');
+          document.getElementById('sim-toggle-btn').innerText = '實時時間模式';
+        }
+      } catch (err) {
+        console.warn('LocalStorage error:', err);
+      }
+    }
+
+    // ------------------ CURRENCY LOGIC ------------------
+    async function fetchLatestRate() {
+      try {
+        const response = await fetch(apiURL);
+        if (!response.ok) throw new Error('API request failed');
+        const data = await response.json();
+        
+        if (data && data.rates && data.rates.KRW) {
+          currentRate = data.rates.KRW;
+          rateInput.value = currentRate.toFixed(2);
+          
+          const timeStr = new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' });
+          rateStatus.innerHTML = `<i class="fa-solid fa-circle-check" style="color: #4ade80;"></i> 即時匯率 (1 TWD = ${currentRate.toFixed(2)} KRW) 更新於 ${timeStr}`;
+          
+          updateCalculations('twd');
+        } else {
+          throw new Error('Invalid rate format');
+        }
+      } catch (error) {
+        console.warn('Rate fetch error, using offline default:', error);
+        rateInput.value = currentRate.toFixed(2);
+        rateStatus.innerHTML = `<i class="fa-solid fa-circle-exclamation" style="color: #fbbf24;"></i> 離線模式 (預設匯率 1 TWD = ${currentRate.toFixed(1)} KRW)`;
+        updateCalculations('twd');
+      }
+    }
+
+    // Tab Switcher
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+      if (tabName === 'calc') {
+        document.getElementById('tab-calc').classList.add('active');
+        document.getElementById('content-calc').classList.add('active');
+      } else {
+        document.getElementById('tab-itinerary').classList.add('active');
+        document.getElementById('content-itinerary').classList.add('active');
+        // Recalculate spending widgets based on current rate
+        updateAllExpensesUI();
+        recalculateTotals();
+        scrollToCurrentActiveEvent();
+      }
+    }
+
+    // Bidirectional Calculation
+    function updateCalculations(source) {
+      if (source === 'twd') {
+        const twdVal = parseFloat(twdInput.value);
+        if (!isNaN(twdVal)) {
+          krwInput.value = Math.round(twdVal * currentRate);
+        } else {
+          krwInput.value = '';
+        }
+      } else if (source === 'krw') {
+        const krwVal = parseFloat(krwInput.value);
+        if (!isNaN(krwVal)) {
+          twdInput.value = Math.round(krwVal / currentRate);
+        } else {
+          twdInput.value = '';
+        }
+      }
+      updateReferenceTables();
+    }
+
+    // Quick Add TWD/KRW
+    function addValue(currency, amount) {
+      const input = currency === 'twd' ? twdInput : krwInput;
+      const currentVal = parseFloat(input.value) || 0;
+      input.value = currentVal + amount;
+      updateCalculations(currency);
+    }
+
+    // Clear Inputs
+    function clearValue(currency) {
+      const input = currency === 'twd' ? twdInput : krwInput;
+      input.value = '';
+      updateCalculations(currency);
+    }
+
+    // Manual Rate Edit
+    function onRateChange() {
+      const manualRate = parseFloat(rateInput.value);
+      if (!isNaN(manualRate) && manualRate > 0) {
+        currentRate = manualRate;
+        rateStatus.innerHTML = `<i class="fa-solid fa-pen-to-square" style="color: #60a5fa;"></i> 手動設定匯率 (1 TWD = ${currentRate.toFixed(4)} KRW)`;
+        updateCalculations('twd');
+      }
+    }
+
+    // Render Quick Exchange Reference Tables
+    function updateReferenceTables() {
+      const twdPresets = [100, 500, 1000, 2000, 5000];
+      const krwPresets = [1000, 10000, 50000, 100000];
+
+      // TWD to KRW table
+      let twdHtml = '';
+      twdPresets.forEach(amt => {
+        twdHtml += `
+          <tr>
+            <td class="val-col">NT$ ${amt.toLocaleString()}</td>
+            <td class="res-col blue">₩ ${(Math.round(amt * currentRate)).toLocaleString()}</td>
+          </tr>
+        `;
+      });
+      document.getElementById('twd-ref-body').innerHTML = twdHtml;
+
+      // KRW to TWD table
+      let krwHtml = '';
+      krwPresets.forEach(amt => {
+        krwHtml += `
+          <tr>
+            <td class="val-col">₩ ${amt.toLocaleString()}</td>
+            <td class="res-col green">NT$ ${(Math.round(amt / currentRate)).toLocaleString()}</td>
+          </tr>
+        `;
+      });
+      document.getElementById('krw-ref-body').innerHTML = krwHtml;
+    }
+
+    // ------------------ ITINERARY RENDERING ------------------
+    function renderItinerary() {
+      const container = document.getElementById('timeline-container');
+      let html = '';
+
+      itinerary.forEach((spot) => {
+        const isDone = completedSpots[spot.id] ? 'checked' : '';
+        const savedCost = userExpenses[spot.id] !== undefined ? userExpenses[spot.id] : '';
+        const cardClass = completedSpots[spot.id] ? 'completed' : '';
+
+        html += `
+          <div class="event-card ${cardClass}" id="card-${spot.id}">
+            <div class="timeline-dot"></div>
+            
+            <div class="event-header">
+              <span class="event-time">${spot.timeStart} - ${spot.timeEnd}</span>
+              <input 
+                type="checkbox" 
+                class="event-complete-checkbox" 
+                ${isDone} 
+                onchange="toggleEventCompletion('${spot.id}', this.checked)"
+                title="標記完成"
+              >
+            </div>
+            
+            <h4 class="event-title">${spot.title}</h4>
+            <p class="event-meta">${spot.desc}</p>
+            
+            <div class="event-note">
+              <div class="event-note-title">
+                <i class="fa-solid fa-circle-info"></i> 景點貼士與提醒
+              </div>
+              <div>${spot.note}</div>
+            </div>
+            
+            <div class="event-actions">
+              <a href="${spot.mapLinkKakao}" target="_blank" class="action-link">
+                <i class="fa-solid fa-map-pin"></i> Kakao Map
+              </a>
+              <a href="${spot.mapLinkNaver}" target="_blank" class="action-link">
+                <i class="fa-solid fa-compass"></i> Naver Map
+              </a>
+            </div>
+            
+            <div class="expense-widget">
+              <div class="expense-row">
+                <span class="expense-label">
+                  <i class="fa-solid fa-calculator"></i> 預算估計 (${spot.costLabel}):
+                </span>
+                <span class="expense-value">₩ ${spot.estimatedCost.toLocaleString()}</span>
+              </div>
+              <div class="expense-row">
+                <span class="expense-label">
+                  <i class="fa-solid fa-pen-to-square"></i> 實際花費:
+                </span>
+                <div class="expense-input-group">
+                  <span class="expense-symbol">₩</span>
+                  <input 
+                    type="number" 
+                    placeholder="輸入實際金額" 
+                    id="cost-input-${spot.id}"
+                    value="${savedCost}" 
+                    oninput="logExpense('${spot.id}', this.value)"
+                    class="expense-input"
+                  >
+                </div>
+              </div>
+              <div class="expense-converted" id="converted-twd-${spot.id}">
+                折合新台幣: NT$ 0
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+      updateAllExpensesUI();
+      recalculateTotals();
+    }
+
+    // Toggle event card completion state
+    function toggleEventCompletion(id, checked) {
+      const card = document.getElementById(`card-${id}`);
+      if (checked) {
+        card.classList.add('completed');
+        completedSpots[id] = true;
+      } else {
+        card.classList.remove('completed');
+        delete completedSpots[id];
+      }
+      localStorage.setItem('busan_completed', JSON.stringify(completedSpots));
+    }
+
+    // Input Actual Spent per spot
+    function logExpense(id, val) {
+      const cost = parseFloat(val);
+      if (!isNaN(cost) && cost >= 0) {
+        userExpenses[id] = cost;
+      } else {
+        delete userExpenses[id];
+      }
+      
+      localStorage.setItem('busan_expenses', JSON.stringify(userExpenses));
+      
+      // Update specific converted item
+      updateSingleExpenseUI(id);
+      recalculateTotals();
+    }
+
+    // Update TWD conversion label inside single timeline item
+    function updateSingleExpenseUI(id) {
+      const spot = itinerary.find(s => s.id === id);
+      if (!spot) return;
+
+      const input = document.getElementById(`cost-input-${id}`);
+      const convertedDisplay = document.getElementById(`converted-twd-${id}`);
+      
+      const krwVal = parseFloat(input.value);
+      if (!isNaN(krwVal)) {
+        const twdVal = Math.round(krwVal / currentRate);
+        convertedDisplay.innerText = `折合新台幣: NT$ ${twdVal.toLocaleString()}`;
+        convertedDisplay.style.visibility = 'visible';
+      } else {
+        convertedDisplay.innerText = '';
+        convertedDisplay.style.visibility = 'hidden';
+      }
+    }
+
+    // Update all conversions in timeline list
+    function updateAllExpensesUI() {
+      itinerary.forEach(spot => {
+        updateSingleExpenseUI(spot.id);
+      });
+    }
+
+    // Aggregate budgets vs spent totals
+    function recalculateTotals() {
+      let estTotalKrw = 0;
+      let actTotalKrw = 0;
+
+      itinerary.forEach(spot => {
+        estTotalKrw += spot.estimatedCost;
+        if (userExpenses[spot.id] !== undefined) {
+          actTotalKrw += userExpenses[spot.id];
+        }
+      });
+
+      const estTotalTwd = Math.round(estTotalKrw / currentRate);
+      const actTotalTwd = Math.round(actTotalKrw / currentRate);
+
+      document.getElementById('budget-estimated').innerText = `₩ ${estTotalKrw.toLocaleString()}`;
+      document.getElementById('budget-estimated-twd').innerText = `(NT$ ${estTotalTwd.toLocaleString()})`;
+
+      document.getElementById('budget-actual').innerText = `₩ ${actTotalKrw.toLocaleString()}`;
+      document.getElementById('budget-actual-twd').innerText = `(NT$ ${actTotalTwd.toLocaleString()})`;
+
+      // Fill budget percentage bar
+      const fillBar = document.getElementById('budget-fill');
+      if (estTotalKrw > 0) {
+        let percent = (actTotalKrw / estTotalKrw) * 100;
+        fillBar.style.width = `${Math.min(percent, 100)}%`;
+        
+        // Color shifts based on limits
+        if (percent > 100) {
+          fillBar.style.background = 'var(--accent-gradient)';
+        } else if (percent > 85) {
+          fillBar.style.background = 'var(--warning-gradient)';
+        } else {
+          fillBar.style.background = 'var(--success-gradient)';
+        }
+      } else {
+        fillBar.style.width = '0%';
+      }
+    }
+
+    // ------------------ TIME SCHEDULER & TICKER ------------------
+    function startClockTicker() {
+      // Refresh time checker loop
+      setInterval(updateTimelineStates, 10000);
+      updateTimelineStates();
+    }
+
+    // Get current minutes of day (e.g. 08:30 -> 8 * 60 + 30 = 510)
+    function getMinutesOfDay(timeStr) {
+      const parts = timeStr.split(':');
+      return parseInt(parts[0]) * 60 + parseInt(parts[1]);
+    }
+
+    // Render active/completed highlights on timeline cards based on current time
+    function updateTimelineStates() {
+      let currentMin = 0;
+
+      if (isSimulation) {
+        currentMin = simulatedMinutes;
+      } else {
+        const now = new Date();
+        currentMin = now.getHours() * 60 + now.getMinutes();
+      }
+
+      // Track active spot
+      let activeSpot = null;
+      let nextSpot = null;
+      let activeCardElement = null;
+
+      // Loop itinerary to classify spot states
+      itinerary.forEach((spot, index) => {
+        const startMin = getMinutesOfDay(spot.timeStart);
+        const endMin = getMinutesOfDay(spot.timeEnd);
+        const card = document.getElementById(`card-${spot.id}`);
+
+        if (!card) return;
+
+        card.classList.remove('active');
+
+        if (currentMin >= startMin && currentMin < endMin) {
+          // Inside this event
+          card.classList.add('active');
+          activeSpot = spot;
+          activeCardElement = card;
+          if (index < itinerary.length - 1) {
+            nextSpot = itinerary[index + 1];
+          }
+        }
+      });
+
+      // Update Current Progress Dashboard Header
+      const headerTitle = document.getElementById('current-title');
+      const headerNext = document.getElementById('current-next');
+      const headerProgressFill = document.getElementById('current-progress');
+
+      if (activeSpot) {
+        const startMin = getMinutesOfDay(activeSpot.timeStart);
+        const endMin = getMinutesOfDay(activeSpot.timeEnd);
+        const totalDuration = endMin - startMin;
+        const progressMin = currentMin - startMin;
+        const progressPercentage = (progressMin / totalDuration) * 100;
+
+        // Render current title
+        const minsLeft = endMin - currentMin;
+        headerTitle.innerHTML = `<span style="font-weight:900;">進行中:</span> ${activeSpot.title.split('：')[1] || activeSpot.title} <span style="font-size:0.75rem; background:rgba(255,255,255,0.25); padding: 0.1rem 0.35rem; border-radius: 4px; font-weight:700;">剩餘 ${minsLeft} 分鐘</span>`;
+        
+        // Render next title
+        if (nextSpot) {
+          headerNext.innerText = `下一站 (${nextSpot.timeStart}): ${nextSpot.title.split('：')[1] || nextSpot.title}`;
+        } else {
+          headerNext.innerText = `這是今日最後一個行程囉！`;
+        }
+
+        headerProgressFill.style.width = `${progressPercentage}%`;
+
+        // Check if active spot changed to perform smooth scroll
+        if (activeSpot.id !== lastActiveSpotId) {
+          lastActiveSpotId = activeSpot.id;
+          scrollToCurrentActiveEvent();
+        }
+      } else {
+        // Outside scheduled range
+        const firstStart = getMinutesOfDay(itinerary[0].timeStart);
+        const lastEnd = getMinutesOfDay(itinerary[itinerary.length - 1].timeEnd);
+
+        if (currentMin < firstStart) {
+          const minsToStart = firstStart - currentMin;
+          const hoursToStart = Math.floor(minsToStart / 60);
+          const remMins = minsToStart % 60;
+          const waitStr = hoursToStart > 0 ? `${hoursToStart} 小時 ${remMins} 分鐘` : `${remMins} 分鐘`;
+          
+          headerTitle.innerText = `☀️ 今日行程尚未開始！`;
+          headerNext.innerText = `首站早餐將在 08:00 開始 (距離還有 ${waitStr})`;
+        } else {
+          headerTitle.innerText = `🌙 今日行程已圓滿結束！`;
+          headerNext.innerText = `願您在釜山玩得愉快，今晚做個好夢～`;
+        }
+        headerProgressFill.style.width = '0%';
+        lastActiveSpotId = null;
+      }
+    }
+
+    // Scroll to the active timeline item
+    function scrollToCurrentActiveEvent() {
+      if (lastActiveSpotId) {
+        const activeCard = document.getElementById(`card-${lastActiveSpotId}`);
+        if (activeCard) {
+          // Add micro-delay for DOM tab switches to settle
+          setTimeout(() => {
+            activeCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 150);
+        }
+      }
+    }
+
+    // ------------------ TIME SIMULATION ------------------
+    function toggleSimulation() {
+      isSimulation = !isSimulation;
+      const slider = document.getElementById('sim-slider');
+      const toggleBtn = document.getElementById('sim-toggle-btn');
+      
+      slider.disabled = !isSimulation;
+      localStorage.setItem('busan_is_sim', isSimulation);
+
+      if (isSimulation) {
+        toggleBtn.classList.add('active');
+        toggleBtn.innerText = '實時時間模式';
+        // Read current slider val
+        onSimulationSliderChange(slider.value);
+      } else {
+        toggleBtn.classList.remove('active');
+        toggleBtn.innerText = '切換模擬時間';
+        // Get actual system time
+        const now = new Date();
+        const curMin = now.getHours() * 60 + now.getMinutes();
+        document.getElementById('sim-time-display').innerText = formatMinutesToTimeString(curMin);
+        updateTimelineStates();
+      }
+    }
+
+    // Triggered when slider moves
+    function onSimulationSliderChange(val) {
+      simulatedMinutes = parseInt(val);
+      localStorage.setItem('busan_sim_min', simulatedMinutes);
+      document.getElementById('sim-time-display').innerText = formatMinutesToTimeString(simulatedMinutes);
+      updateTimelineStates();
+    }
+
+    // Helper format minutes to HH:MM
+    function formatMinutesToTimeString(min) {
+      const hh = Math.floor(min / 60).toString().padStart(2, '0');
+      const mm = (min % 60).toString().padStart(2, '0');
+      return `${hh}:${mm}`;
+    }
+
+  </script>
+</body>
+</html>
