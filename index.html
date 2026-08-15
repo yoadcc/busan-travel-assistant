@@ -249,7 +249,7 @@
     const rateInput = document.getElementById('rate-input');
     const rateStatus = document.getElementById('rate-status');
     
-    // Itinerary Data Array
+    // Itinerary Data Array (Addresses sourced from 釜山Naver Map地址.docx)
     const itinerary = [
       {
         id: "spot-1",
@@ -257,9 +257,10 @@
         timeEnd: "09:00",
         title: "早餐：ALL SUNDAY 貝果 廣安店 🥯",
         desc: "廣安里必吃超人氣貝果，口感扎實Q彈，起司抹醬大推！",
+        address: "부산 수영구 광안로61번길 28 1층",
         note: "【推薦】熱門口味容易完售，建議踩點或提早抵達挑選好口味。",
-        mapLinkKakao: "https://map.kakao.com/?q=ALL SUNDAY 貝果 廣安店",
-        mapLinkNaver: "https://map.naver.com/v5/search/ALL SUNDAY 貝果 廣安店",
+        mapLinkKakao: "https://map.kakao.com/?q=부산 수영구 광안로61번길 28",
+        mapLinkNaver: "https://map.naver.com/v5/search/부산 수영구 광안로61번길 28 1층",
         estimatedCost: 10000,
         costLabel: "貝果早餐費"
       },
@@ -269,9 +270,10 @@
         timeEnd: "09:35",
         title: "轉場：廣安里 ➔ 甘川洞 🚕",
         desc: "搭乘計程車，從廣安里直奔甘川洞文化村。",
+        address: "부산廣域市 沙下區 甘內2路 203 (감천문화마을)",
         note: "【交通】建議直達計程車以節省體力 (車程約 35 分鐘，預估車資 ₩18,000)。",
-        mapLinkKakao: "https://map.kakao.com/?q=甘川洞文化村",
-        mapLinkNaver: "https://map.naver.com/v5/search/甘川洞文化村",
+        mapLinkKakao: "https://map.kakao.com/?q=부산광역시 사하구 감내2로 203",
+        mapLinkNaver: "https://map.naver.com/v5/search/부산광역시 사하구 감내2로 203",
         estimatedCost: 18000,
         costLabel: "預估計程車資"
       },
@@ -281,9 +283,10 @@
         timeEnd: "11:30",
         title: "景點：甘川洞文化村 🎨",
         desc: "探索彩色壁畫村，尋找小王子與狐狸合照，到景觀咖啡廳俯瞰村落。",
+        address: "부산광역시 사하구 감내2로 203",
         note: "【體驗】甘川洞手翻書 Flipbook Studio - Busan pass<br>【提醒】手翻書：8秒鐘的連續動態錄影。建議事先想好 2至3個幅度大且連貫的動作(如：揮手 ➔ 比愛心 ➔ 親一下)，錄製效果最生動！",
-        mapLinkKakao: "https://map.kakao.com/?q=甘川洞 Flipbook Studio",
-        mapLinkNaver: "https://map.naver.com/v5/search/甘川洞 Flipbook Studio",
+        mapLinkKakao: "https://map.kakao.com/?q=부산광역시 사하구 감내2로 203",
+        mapLinkNaver: "https://map.naver.com/v5/search/부산광역시 사하구 감내2로 203",
         estimatedCost: 0,
         costLabel: "手翻書 (Busan Pass 免費)"
       },
@@ -293,9 +296,10 @@
         timeEnd: "11:45",
         title: "轉場：甘川洞 ➔ 松島 🚕",
         desc: "前往松島午餐餐廳「海底貝殼王國」。",
+        address: "부산 서구 송도해변로 147-1 (바닷속조개왕국)",
         note: "【交通】計程車車程極短，約 12-15 分鐘。預估車資約 ₩6,000。",
-        mapLinkKakao: "https://map.kakao.com/?q=松島 海底貝殼王國",
-        mapLinkNaver: "https://map.naver.com/v5/search/松島 海底貝殼王國",
+        mapLinkKakao: "https://map.kakao.com/?q=부산 서구 송도해변로 147-1",
+        mapLinkNaver: "https://map.naver.com/v5/search/부산 서구 송도해변로 147-1",
         estimatedCost: 6000,
         costLabel: "預估計程車資"
       },
@@ -305,9 +309,10 @@
         timeEnd: "13:30",
         title: "午餐：海底貝殼王國（烤扇貝） 🦪",
         desc: "松島經典海邊美味！享用炭火現烤、放滿起司的新鮮扇貝。",
+        address: "부산 서구 송도해변로 147-1",
         note: "【推薦】烤扇貝加上起司與洋蔥調味，最後配上海苔炒飯堪稱一絕！",
-        mapLinkKakao: "https://map.kakao.com/?q=海底貝殼王國",
-        mapLinkNaver: "https://map.naver.com/v5/search/海底貝殼王國",
+        mapLinkKakao: "https://map.kakao.com/?q=부산 서구 송도해변로 147-1",
+        mapLinkNaver: "https://map.naver.com/v5/search/부산 서구 송도해변로 147-1",
         estimatedCost: 60000,
         costLabel: "雙人烤扇貝餐費"
       },
@@ -317,9 +322,10 @@
         timeEnd: "13:40",
         title: "轉場：步行前往纜車站 🚶",
         desc: "從餐廳出發移動至「松島灣纜車站」。",
+        address: "부산 서구 송도해변로 171",
         note: "【交通】可散步慢慢沿海岸走（約 10 分鐘）或搭計程車（3分鐘，基本車資）。",
-        mapLinkKakao: "https://map.kakao.com/?q=松島灣纜車站",
-        mapLinkNaver: "https://map.naver.com/v5/search/松島灣纜車站",
+        mapLinkKakao: "https://map.kakao.com/?q=부산 서구 송도해변로 171",
+        mapLinkNaver: "https://map.naver.com/v5/search/부산 서구 송도해변로 171",
         estimatedCost: 0,
         costLabel: "步行前往"
       },
@@ -329,9 +335,10 @@
         timeEnd: "14:20",
         title: "景點：松島開卡與搭纜車 🚠",
         desc: "使用 Busan Pass 兌換松島海上纜車門票，排隊搭乘水晶車廂跨海。",
+        address: "부산 서구 송도해변로 171 (송도해상케이블카)",
         note: "【提醒】週日下午排隊搭乘水晶車廂（透明地板）人潮眾多，請務必預留足夠候車排隊時間。",
-        mapLinkKakao: "https://map.kakao.com/?q=松島海上纜車",
-        mapLinkNaver: "https://map.naver.com/v5/search/松島海上纜車",
+        mapLinkKakao: "https://map.kakao.com/?q=부산 서구 송도해변로 171",
+        mapLinkNaver: "https://map.naver.com/v5/search/부산 서구 송도해변로 171",
         estimatedCost: 0,
         costLabel: "海上纜車 (Busan Pass 免費)"
       },
@@ -341,9 +348,10 @@
         timeEnd: "14:50",
         title: "景點：朝聖松島龍宮雲橋 🌉",
         desc: "行走在網狀鏤空的雲橋上，感受海浪在腳下奔騰的震撼，眺望陡峭懸崖。",
+        address: "부산광역시 서구 암남동 620-53",
         note: "【注意】需現場自費 ₩1,000 (不含在Pass)。此處海風強勁，請留意保暖與隨身物品。<br>【路線】纜車下站 (SkyPark站) 出口直走是岩南公園，順著右手邊下坡小路走 5 分鐘即達雲橋售票處。",
-        mapLinkKakao: "https://map.kakao.com/?q=松島龍宮雲橋",
-        mapLinkNaver: "https://map.naver.com/v5/search/松島龍宮雲橋",
+        mapLinkKakao: "https://map.kakao.com/?q=부산광역시 서구 암남동 620-53",
+        mapLinkNaver: "https://map.naver.com/v5/search/부산광역시 서구 암남동 620-53",
         estimatedCost: 1000,
         costLabel: "雲橋門票 (需自費)"
       },
@@ -353,9 +361,10 @@
         timeEnd: "15:10",
         title: "拍照：岩南公園海岸木棧道 📸",
         desc: "沿著雲橋旁的海岸懸崖木棧道漫步，拍攝極具張力的絕美海景合影。",
+        address: "부산광역시 서구 암남동 620-53",
         note: "【推薦】這段路程海景最颯、最開闊！大約走 10 分鐘拍完精華照片後原路折返。",
-        mapLinkKakao: "https://map.kakao.com/?q=岩南公園海岸木棧道",
-        mapLinkNaver: "https://map.naver.com/v5/search/岩南公園海岸木棧道",
+        mapLinkKakao: "https://map.kakao.com/?q=부산광역시 서구 암남동 620-53",
+        mapLinkNaver: "https://map.naver.com/v5/search/부산광역시 서구 암남동 620-53",
         estimatedCost: 0,
         costLabel: "免費參觀"
       },
@@ -365,9 +374,10 @@
         timeEnd: "15:40",
         title: "景點：纜車站頂樓與恐龍廣場 🦖",
         desc: "回到纜車 SkyPark 站，上觀景台與小王子拍照，並在戶外看會發聲的動態恐龍。",
+        address: "부산 서구 송도해변로 171",
         note: "【指南】直奔 SkyPark 站 3 樓觀景台拍小王子，之後到 1 樓廣場和高聳的巨大暴龍、翼龍合照。",
-        mapLinkKakao: "https://map.kakao.com/?q=松島 SkyPark 觀景台",
-        mapLinkNaver: "https://map.naver.com/v5/search/松島 SkyPark 觀景台",
+        mapLinkKakao: "https://map.kakao.com/?q=부산 서구 송도해변로 171",
+        mapLinkNaver: "https://map.naver.com/v5/search/부산 서구 송도해변로 171",
         estimatedCost: 0,
         costLabel: "免費參觀"
       },
@@ -377,9 +387,10 @@
         timeEnd: "16:00",
         title: "回程：搭乘回程纜車 🚠",
         desc: "搭纜車返回松島灣站。在海中央迎接斜陽，欣賞波光粼粼的夕陽海景。",
+        address: "부산 서구 송도해변로 171",
         note: "【提醒】同樣需排隊，接近黃昏時的海景搭配落日非常美麗，相機不要收！",
-        mapLinkKakao: "https://map.kakao.com/?q=松島海上纜車",
-        mapLinkNaver: "https://map.naver.com/v5/search/松島海上纜車",
+        mapLinkKakao: "https://map.kakao.com/?q=부산 서구 송도해변로 171",
+        mapLinkNaver: "https://map.naver.com/v5/search/부산 서구 송도해변로 171",
         estimatedCost: 0,
         costLabel: "回程纜車"
       },
@@ -389,9 +400,10 @@
         timeEnd: "16:15",
         title: "轉場：松島 ➔ 南浦洞 🚕",
         desc: "從松島纜車站搭計程車移防南浦洞繁華商圈。",
+        address: "부산광역시 중구 비프광장로 36",
         note: "【交通】計程車車程約 10-15 分鐘，預估車資 ₩7,000。",
-        mapLinkKakao: "https://map.kakao.com/?q=南浦洞 光復路商圈",
-        mapLinkNaver: "https://map.naver.com/v5/search/南浦洞 光復路商圈",
+        mapLinkKakao: "https://map.kakao.com/?q=부산광역시 중구 비프광장로 36",
+        mapLinkNaver: "https://map.naver.com/v5/search/부산광역시 중구 비프광장로 36",
         estimatedCost: 7000,
         costLabel: "預估計程車資"
       },
@@ -401,9 +413,10 @@
         timeEnd: "16:50",
         title: "點心：BIFF 廣場吃黑糖餅 🥞",
         desc: "朝聖釜山招牌點心「元祖黑糖餅」。",
+        address: "부산광역시 중구 비프광장로 36",
         note: "【美食】現炸熱騰騰金黃酥脆的黑糖餅塞滿堅果，非常排隊，但速度很快。建議一拿到就熱熱吃，極度美味！",
-        mapLinkKakao: "https://map.kakao.com/?q=南浦洞 BIFF 廣場",
-        mapLinkNaver: "https://map.naver.com/v5/search/南浦洞 BIFF 廣場",
+        mapLinkKakao: "https://map.kakao.com/?q=부산광역시 중구 비프광장로 36",
+        mapLinkNaver: "https://map.naver.com/v5/search/부산광역시 중구 비프광장로 36",
         estimatedCost: 4000,
         costLabel: "黑糖餅點心費 (2人份)"
       },
@@ -413,9 +426,10 @@
         timeEnd: "20:00",
         title: "逛街與晚餐：南浦洞精華區 🛍️",
         desc: "大逛光復路、國際市場、樂天百貨光復店(狂逛大創與超市)。晚餐在南浦蔘雞湯享用熱騰騰的雞湯。",
+        address: "부산광역시 중구 남포길 16-1 (남포삼계탕)",
         note: "【推薦】樂天百貨 11 樓頂樓有免費花園，是看「影島大橋」的絕佳私房景點！<br>【晚餐】南浦蔘雞湯 (남포삼계탕) 擁有數十年歷史，雞肉軟嫩、糯米香濃，附人蔘酒！",
-        mapLinkKakao: "https://map.kakao.com/?q=南浦蔘雞湯",
-        mapLinkNaver: "https://map.naver.com/v5/search/南浦蔘雞湯",
+        mapLinkKakao: "https://map.kakao.com/?q=부산광역시 중구 남포길 16-1",
+        mapLinkNaver: "https://map.naver.com/v5/search/부산광역시 중구 남포길 16-1",
         estimatedCost: 45000,
         costLabel: "預估晚餐及逛街花費"
       },
@@ -425,9 +439,10 @@
         timeEnd: "20:30",
         title: "回程：南浦洞 ➔ 廣安里 🚕",
         desc: "搭乘計程車返回廣安里住宿，為一日行程劃下句點。",
+        address: "부산 수영구 광안해변로278번길 42 (H Avenue Hotel)",
         note: "【交通】強烈建議直接搭乘計程車直達廣安里 (約 25 分鐘，行經廣安大橋欣賞夜景，預估車資 ₩15,000)。",
-        mapLinkKakao: "https://map.kakao.com/?q=廣安里海水浴場",
-        mapLinkNaver: "https://map.naver.com/v5/search/廣安里海水浴場",
+        mapLinkKakao: "https://map.kakao.com/?q=부산 수영구 광안해변로278번길 42",
+        mapLinkNaver: "https://map.naver.com/v5/search/부산 수영구 광안해변로278번길 42",
         estimatedCost: 15000,
         costLabel: "回程計程車資"
       }
@@ -628,6 +643,18 @@
             
             <h4 class="event-title">${spot.title}</h4>
             <p class="event-meta">${spot.desc}</p>
+
+            ${spot.address ? `
+            <div class="event-address">
+              <div>
+                <i class="fa-solid fa-location-dot" style="color: #16a34a;"></i> <strong>韓文地址:</strong> 
+                <span class="address-text">${spot.address}</span>
+              </div>
+              <button onclick="copyAddress('${spot.id}', this)" class="copy-addr-btn">
+                <i class="fa-solid fa-copy"></i> 複製地址
+              </button>
+            </div>
+            ` : ''}
             
             <div class="event-note">
               <div class="event-note-title">
@@ -692,6 +719,28 @@
         delete completedSpots[id];
       }
       localStorage.setItem('busan_completed', JSON.stringify(completedSpots));
+    }
+
+    // Copy Korean Address to clipboard
+    function copyAddress(id, btn) {
+      const spot = itinerary.find(s => s.id === id);
+      if (spot && spot.address) {
+        // Strip parenthetical Chinese notes from address for clean copy if needed, or copy clean address
+        const cleanAddr = spot.address.split('(')[0].trim();
+        navigator.clipboard.writeText(cleanAddr).then(() => {
+          const originalHTML = btn.innerHTML;
+          btn.innerHTML = '<i class="fa-solid fa-check"></i> 已複製!';
+          btn.style.background = '#16a34a';
+          btn.style.color = '#ffffff';
+          setTimeout(() => {
+            btn.innerHTML = originalHTML;
+            btn.style.background = '';
+            btn.style.color = '';
+          }, 1500);
+        }).catch(err => {
+          console.warn('Clipboard write failed:', err);
+        });
+      }
     }
 
     // Input Actual Spent per spot

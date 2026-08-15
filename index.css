@@ -689,6 +689,43 @@ details[open] .details-summary i {
   gap: 0.25rem;
 }
 
+/* Korean Address Block */
+.event-address {
+  background: #f0fdf4;
+  border-left: 3px solid #16a34a;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  font-size: 0.7rem;
+  color: #14532d;
+  margin-bottom: 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.address-text {
+  font-family: monospace, sans-serif;
+  font-weight: 600;
+  word-break: break-all;
+}
+.copy-addr-btn {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #15803d;
+  background: #dcfce7;
+  border: 1px solid #86efac;
+  padding: 0.2rem 0.45rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+}
+.copy-addr-btn:hover {
+  background: #16a34a;
+  color: var(--white);
+}
+
 /* Map Action Buttons */
 .event-actions {
   display: flex;
