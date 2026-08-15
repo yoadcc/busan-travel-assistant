@@ -289,6 +289,13 @@
     // Current Selected Day State
     let currentDay = 'day3';
 
+    // User State (must be declared before DOMContentLoaded runs, so renderItinerary() never gets a ReferenceError)
+    let userExpenses = {};
+    let completedSpots = {};
+    let isSimulation = false;
+    let simulatedMinutes = 480;
+    let lastActiveSpotId = null;
+
     // Hotel Accommodation Data per day (sourced from 釜山Naver Map地址.docx)
     const hotelData = {
       day1: {
@@ -1250,7 +1257,8 @@
       const manualRate = parseFloat(rateInput.value);
       if (!isNaN(manualRate) && manualRate > 0) {
         currentRate = manualRate;
-        rateStatus.innerHTML = `<i class="fa-solid fa-pen-to-square" style="color: #60a5fa;"></i> 手動設定匯率 (1 TWD = ${currentRate.toFixed(4)} KRW)`;
+        const rateStatus = document.getElementById('rate-status');
+        if (rateStatus) rateStatus.innerHTML = `<i class="fa-solid fa-pen-to-square" style="color: #60a5fa;"></i> 手動設定匯率 (1 TWD = ${currentRate.toFixed(4)} KRW)`;
         updateCalculations('twd');
       }
     }
