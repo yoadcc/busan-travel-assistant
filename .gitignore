@@ -1,0 +1,5 @@
+*.exe
+*.pptx
+*.docx
+~$*
+.DS_Store
