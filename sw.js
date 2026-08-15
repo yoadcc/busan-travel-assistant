@@ -1,8 +1,10 @@
-const CACHE_NAME = 'busan-travel-v9';
+const CACHE_NAME = 'busan-travel-v10';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './index.css',
+  './js/data.js',
+  './js/app.js',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
 ];
 
