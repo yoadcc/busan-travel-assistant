@@ -1,4 +1,4 @@
-﻿// =============================================================
+// =============================================================
 // app.js — 釜山旅遊特助：應用程式邏輯
 // 依賴：data.js 必須在此之前載入
 // =============================================================
@@ -294,14 +294,37 @@ let currentRate = 42.50;
         const savedCost = userExpenses[spot.id] !== undefined ? userExpenses[spot.id] : '';
         const cardClass = completedSpots[spot.id] ? 'completed' : '';
 
-        // Clean Korean address & generate official Mobile Kakao/Naver Map search deep links
-        const cleanAddr = spot.address ? spot.address.split('(')[0].trim() : '';
-        const kakaoUrl = cleanAddr 
-          ? `https://map.kakao.com/link/search/${encodeURIComponent(cleanAddr)}` 
-          : spot.mapLinkKakao;
-        const naverUrl = cleanAddr 
-          ? `https://map.naver.com/v5/search/${encodeURIComponent(cleanAddr)}` 
-          : spot.mapLinkNaver;
+        // Generate map actions HTML based on available map links
+        let actionsHtml = '';
+        if (spot.mapLinkGoogle) {
+          actionsHtml = `
+            <a href="${spot.mapLinkGoogle}" target="_blank" class="action-link">
+              <i class="fa-solid fa-map-location-dot"></i> Google Maps 導航
+            </a>
+          `;
+        } else if (spot.addresses && spot.addresses.length > 0) {
+          // Multiple addresses (e.g. "A 或 B") — show first address nav buttons as primary
+          // Individual nav buttons are rendered inline within each address block below
+          actionsHtml = '';
+        } else {
+          // Clean Korean address & generate official Mobile Kakao/Naver Map search deep links
+          const cleanAddr = spot.address ? spot.address.split('(')[0].trim() : '';
+          const kakaoUrl = cleanAddr 
+            ? `https://map.kakao.com/link/search/${encodeURIComponent(cleanAddr)}` 
+            : spot.mapLinkKakao;
+          const naverUrl = cleanAddr 
+            ? `https://map.naver.com/v5/search/${encodeURIComponent(cleanAddr)}` 
+            : spot.mapLinkNaver;
+            
+          actionsHtml = `
+            <a href="${kakaoUrl}" target="_blank" class="action-link">
+              <i class="fa-solid fa-map-pin"></i> Kakao Map
+            </a>
+            <a href="${naverUrl}" target="_blank" class="action-link">
+              <i class="fa-solid fa-compass"></i> Naver Map
+            </a>
+          `;
+        }
 
         html += `
           <div class="event-card ${cardClass}" id="card-${spot.id}">
@@ -321,7 +344,28 @@ let currentRate = 42.50;
             <h4 class="event-title">${spot.title}</h4>
             <p class="event-meta">${spot.desc}</p>
 
-            ${spot.address ? `
+            ${spot.addresses && spot.addresses.length > 0 ? spot.addresses.map((loc, idx) => {
+              const cleanA = loc.address ? loc.address.split('(')[0].trim() : '';
+              const kUrl = cleanA ? `https://map.kakao.com/link/search/${encodeURIComponent(cleanA)}` : '';
+              const nUrl = cleanA ? `https://map.naver.com/v5/search/${encodeURIComponent(cleanA)}` : '';
+              return `
+              <div class="event-address event-address-multi" id="addr-block-${spot.id}-${idx}">
+                <div class="addr-option-label">📍 ${loc.label}</div>
+                <div class="addr-option-row">
+                  <span class="address-text">${loc.address}</span>
+                  <button onclick="navigator.clipboard.writeText('${loc.address.replace(/'/g, "'")}')
+                    .then(() => { this.textContent='✓ 已複製'; setTimeout(()=>{ this.innerHTML='<i class=\'fa-solid fa-copy\'></i> 複製'; }, 2000); })" class="copy-addr-btn">
+                    <i class="fa-solid fa-copy"></i> 複製
+                  </button>
+                </div>
+                <div class="event-actions addr-nav-row">
+                  ${kUrl ? `<a href="${kUrl}" target="_blank" class="action-link"><i class="fa-solid fa-map-pin"></i> Kakao Map</a>` : ''}
+                  ${nUrl ? `<a href="${nUrl}" target="_blank" class="action-link"><i class="fa-solid fa-compass"></i> Naver Map</a>` : ''}
+                </div>
+              </div>
+              ${idx < spot.addresses.length - 1 ? '<div class="addr-or-divider">── 或 ──</div>' : ''}
+              `;
+            }).join('') : spot.address ? `
             <div class="event-address">
               <div>
                 <i class="fa-solid fa-location-dot" style="color: #16a34a;"></i> <strong>韓文地址:</strong> 
@@ -348,12 +392,7 @@ let currentRate = 42.50;
             </details>
             
             <div class="event-actions">
-              <a href="${kakaoUrl}" target="_blank" class="action-link">
-                <i class="fa-solid fa-map-pin"></i> Kakao Map
-              </a>
-              <a href="${naverUrl}" target="_blank" class="action-link">
-                <i class="fa-solid fa-compass"></i> Naver Map
-              </a>
+              ${actionsHtml}
             </div>
             
             <div class="expense-widget">

@@ -1,4 +1,4 @@
-﻿// =============================================================
+// =============================================================
 // data.js — 釜山旅遊特助：靜態資料
 // 包含：hotelData（飯店）、itineraryData（6 天行程）
 // =============================================================
@@ -48,8 +48,7 @@
       "desc": "預計早上 09:00-09:30 從台南出發前往小港機場，14:15 飛機起飛。",
       "address": "高雄國際機場 (小港機場)",
       "note": "【備忘】出發前確定 E-sim 安裝、 Visit Busan Pass App 綁定、隨身準備 ₩50,000~₩100,000 韓元現金儲值交通卡。",
-      "mapLinkKakao": "https://map.kakao.com/",
-      "mapLinkNaver": "https://map.naver.com/",
+      "mapLinkGoogle": "https://www.google.com/maps/dir/?api=1&destination=高雄國際機場",
       "estimatedCost": 0,
       "costLabel": "啟程出發"
     },
@@ -67,21 +66,34 @@
       "costLabel": "輕軌地鐵交通費"
     },
     {
-      "id": "d1-spot-2",
+      "id": "d1-spot-2-1",
       "timeStart": "19:30",
-      "timeEnd": "20:00",
-      "title": "西面「那英換錢所」換韓元 & Arban Hotel Check-in 🏨",
-      "desc": "前往那英換錢所換足韓元現金，入住西面 Arban Hotel。",
-      "address": "부산 부산진구 중앙대로691번길 32 (Arban Hotel)",
-      "note": "【飯店與換錢】Arban Hotel 位於西面站 7 號出口附近，生活機能極佳！在「那英換錢所」換現鈔。",
-      "mapLinkKakao": "https://map.kakao.com/link/search/부산 부산진구 중앙대로691번길 32",
-      "mapLinkNaver": "https://map.naver.com/v5/search/부산 부산진구 중앙대로691번길 32",
+      "timeEnd": "19:50",
+      "title": "換錢：西面「那英換錢所」換韓元 💵",
+      "desc": "前往西面站 7 號出口旁老奶奶那英換錢所換足韓元現金。",
+      "address": "부산광역시 부산진구 서면로 56 (부전동 256-6)",
+      "note": "【換錢】西面站 7 號出口步行 2-3 分鐘，位於服飾/雜貨店內，匯率極佳！",
+      "mapLinkKakao": "https://map.kakao.com/link/search/부산광역시 부산진구 서면로 56",
+      "mapLinkNaver": "https://map.naver.com/v5/search/부산광역시 부산진구 서면로 56",
+      "estimatedCost": 0,
+      "costLabel": "換匯現鈔"
+    },
+    {
+      "id": "d1-spot-2-2",
+      "timeStart": "19:50",
+      "timeEnd": "20:10",
+      "title": "入住：Arban Hotel Check-in 🏨",
+      "desc": "抵達西面熱鬧商圈中心的 Arban Hotel 辦理入住放行李。",
+      "address": "부산광역시 부산진구 중앙대로691번길 32 (아르반호텔)",
+      "note": "【飯店】西面站步行約 5 分鐘，生活機能極佳，周邊餐廳藥妝林立。",
+      "mapLinkKakao": "https://map.kakao.com/link/search/부산광역시 부산진구 중앙대로691번길 32",
+      "mapLinkNaver": "https://map.naver.com/v5/search/부산광역시 부산진구 중앙대로691번길 32",
       "estimatedCost": 0,
       "costLabel": "辦理入住"
     },
     {
       "id": "d1-spot-3",
-      "timeStart": "20:00",
+      "timeStart": "20:10",
       "timeEnd": "21:30",
       "title": "晚餐：山莊 1988 (Sanjang 1988 馬鈴薯排骨湯) 🍲",
       "desc": "西面復古熱點！享用香辣濃郁、肉質軟嫩離骨的馬鈴薯排骨湯。",
@@ -121,17 +133,30 @@
       "costLabel": "Egg Drop 早餐費"
     },
     {
-      "id": "d2-spot-2",
+      "id": "d2-spot-2-1",
       "timeStart": "10:00",
+      "timeEnd": "10:20",
+      "title": "Zimcarry 行李寄送 🧳",
+      "desc": "預約 Zimcarry 將行李交給西面 Arban 飯店櫃檯寄送，當日直達廣安里飯店！",
+      "address": "부산 부산진구 중앙대로691번길 32 (Arban Hotel)",
+      "note": "【Zimcarry】行李直達廣安里飯店。辦理退房並在 Arban 櫃檯交付行李即可，無需自己提行李。",
+      "mapLinkKakao": "https://map.kakao.com/link/search/부산 부산진구 중앙대로691번길 32",
+      "mapLinkNaver": "https://map.naver.com/v5/search/부산 부산진구 중앙대로691번길 32",
+      "estimatedCost": 10000,
+      "costLabel": "Zimcarry 行李寄送費"
+    },
+    {
+      "id": "d2-spot-2-2",
+      "timeStart": "10:20",
       "timeEnd": "11:00",
-      "title": "Zimcarry 行李寄送 (西面 ➔ 廣安里) & 輕裝出發 🚕",
-      "desc": "預約 Zimcarry 將行李交給西面 Arban 櫃檯寄送，雙手空空直奔影島！",
-      "address": "부산 수영구 광안해변로278번길 42 (廣安里 H Avenue)",
-      "note": "【Zimcarry】行李直達廣安里飯店。叫計程車直奔影島 (車程約 25 分鐘)。",
-      "mapLinkKakao": "https://map.kakao.com/link/search/부산 수영구 광안해변로278번길 42",
-      "mapLinkNaver": "https://map.naver.com/v5/search/부산 수영구 광안해변로278번길 42",
-      "estimatedCost": 15000,
-      "costLabel": "Zimcarry + 計程車資"
+      "title": "出發前往影島海女村 🚕",
+      "desc": "叫計程車輕裝直奔影島，沿途欣賞大橋與海景！",
+      "address": "부산광역시 영도구 중리남로 2-36 (영도해녀촌)",
+      "note": "【交通】計程車車程約 25 分鐘，直達影島海女村午餐地。",
+      "mapLinkKakao": "https://map.kakao.com/link/search/부산광역시 영도구 중리남로 2-36",
+      "mapLinkNaver": "https://map.naver.com/v5/search/부산광역시 영도구 중리남로 2-36",
+      "estimatedCost": 5000,
+      "costLabel": "前往影島計程車資"
     },
     {
       "id": "d2-spot-3",
@@ -147,17 +172,43 @@
       "costLabel": "海鮮海膽拉麵餐費"
     },
     {
-      "id": "d2-spot-4",
+      "id": "d2-spot-4-1",
       "timeStart": "13:30",
+      "timeEnd": "14:30",
+      "title": "景點：國立海洋博物館 🐳",
+      "desc": "參觀免費圓柱海底隧道水族館，欣賞精彩海洋生態展示。",
+      "address": "부산광역시 영도구 해양로301번길 45 (국립해양박물관)",
+      "note": "【參觀】韓國第一座國立海洋博物館，大廳的圓柱水族箱與特展非常值得一看！門票免費。",
+      "mapLinkKakao": "https://map.kakao.com/link/search/부산광역시 영도구 해양로301번길 45",
+      "mapLinkNaver": "https://map.naver.com/v5/search/부산광역시 영도구 해양로301번길 45",
+      "estimatedCost": 0,
+      "costLabel": "免費參觀"
+    },
+    {
+      "id": "d2-spot-4-2",
+      "timeStart": "14:30",
+      "timeEnd": "15:30",
+      "title": "下午茶：P.ARK 海景咖啡廳 ☕",
+      "desc": "大逛影島巨型海景咖啡廳，喝咖啡、享用甜點看海景。",
+      "address": "부산광역시 영도구 해양로195번길 180 (피아크)",
+      "note": "【下午茶】巨型複合文化空間，4 樓看出去的釜山港與海景視野絕佳，麵包與咖啡深受好評！",
+      "mapLinkKakao": "https://map.kakao.com/link/search/부산광역시 영도구 해양로195번길 180",
+      "mapLinkNaver": "https://map.naver.com/v5/search/부산광역시 영도구 해양로195번길 180",
+      "estimatedCost": 20000,
+      "costLabel": "P.ARK 下午茶點心"
+    },
+    {
+      "id": "d2-spot-4-3",
+      "timeStart": "15:30",
       "timeEnd": "16:30",
-      "title": "影島精華：國立海洋博物館 ➔ P.ARK ☕ ➔ 白淺灘文化村 🎨",
-      "desc": "參觀免費圓柱海底隧道水族館 ➔ 巨型海景咖啡廳 P.ARK ➔ 白淺灘文化村步道。",
-      "address": "부산광역시 영도구 절영로 194 (白淺灘文化村)",
-      "note": "【交通】海女村 ➔ P.ARK (計程車10分) ➔ 白淺灘 (計程車15分)。拍藍白彩繪村與絕壁海岸隧道！",
+      "title": "景點：白淺灘文化村 🎨",
+      "desc": "沿白淺灘文化村步道漫步，拍攝絕壁海岸隧道與彩繪彩虹階梯。",
+      "address": "부산광역시 영도구 절영로 194 (흰여울문화마을)",
+      "note": "【拍照】沿著海岸峭壁散步，極像希臘聖托里尼的藍白彩繪村落，海岸隧道入口是絕佳合照點！",
       "mapLinkKakao": "https://map.kakao.com/link/search/부산광역시 영도구 절영로 194",
       "mapLinkNaver": "https://map.naver.com/v5/search/부산광역시 영도구 절영로 194",
-      "estimatedCost": 20000,
-      "costLabel": "下午茶點心"
+      "estimatedCost": 0,
+      "costLabel": "白淺灘參觀"
     },
     {
       "id": "d2-spot-5",
@@ -173,17 +224,30 @@
       "costLabel": "回廣安里計程車資"
     },
     {
-      "id": "d2-spot-6",
+      "id": "d2-spot-6-1",
       "timeStart": "18:00",
-      "timeEnd": "20:00",
-      "title": "水邊最高豬肉湯飯抽號碼牌 ➔ Millac the Market 逛街小食 🍢",
-      "desc": "先去水邊最高豬肉湯飯抽 Catch Table 號碼牌，散步至 Millac the Market 買小點心。",
-      "address": "부산 수영구 광안해변로370번길 9-32 (水邊最高돼지국밥)",
-      "note": "【Catch Table】先抽號碼牌 ➔ 逛廣安里複合商場 Millac the Market。",
+      "timeEnd": "18:30",
+      "title": "水邊最高豬肉湯飯抽號碼牌 📱",
+      "desc": "先前往廣安里水邊最高豬肉湯飯現場或 Catch Table 抽號碼牌。",
+      "address": "부산 수영구 광안해변로370번길 9-32 (수변최고돼지국밥 민락본점)",
+      "note": "【湯飯排隊】熱門用餐時間需排隊，先抽號碼牌再前往 Millac 逛街，善用等待時間！",
       "mapLinkKakao": "https://map.kakao.com/link/search/부산 수영구 광안해변로370번길 9-32",
       "mapLinkNaver": "https://map.naver.com/v5/search/부산 수영구 광안해변로370번길 9-32",
+      "estimatedCost": 0,
+      "costLabel": "抽湯飯號碼牌"
+    },
+    {
+      "id": "d2-spot-6-2",
+      "timeStart": "18:30",
+      "timeEnd": "20:00",
+      "title": "逛街：Millac the Market 複合商場 🛍️",
+      "desc": "散步至 Millac the Market，體驗特色複合式商場，採買精緻小物與特色小食。",
+      "address": "부산 수영구 민락수변로 17번길 56 (밀락더마켓)",
+      "note": "【逛街】近年最夯的潮流倉庫式空間，大階梯面海設計極具現代感，裡面有很多文青設計店鋪及美味點心。",
+      "mapLinkKakao": "https://map.kakao.com/link/search/부산 수영구 민락수변로 17번길 56",
+      "mapLinkNaver": "https://map.naver.com/v5/search/부산 수영구 민락수변로 17번길 56",
       "estimatedCost": 10000,
-      "costLabel": "Millac Market 點心費"
+      "costLabel": "Millac Market 點心與購物"
     },
     {
       "id": "d2-spot-7",
@@ -383,17 +447,43 @@
       "costLabel": "黑糖餅點心費 (2人份)"
     },
     {
-      "id": "spot-14",
+      "id": "spot-14-1",
       "timeStart": "16:50",
+      "timeEnd": "18:15",
+      "title": "購物：南浦洞光復路 ＆ 國際市場 🛍️",
+      "desc": "大逛光復路服飾街、國際市場與 BIFF 廣場，體驗釜山最在地的熱鬧商圈。",
+      "address": "부산광역시 중구 중구로 32 (국제시장)",
+      "note": "【逛街】國際市場有許多雜貨及美食店，光復路則充滿美妝與時裝品牌店，非常適合採購！",
+      "mapLinkKakao": "https://map.kakao.com/link/search/부산광역시 중구 중구로 32",
+      "mapLinkNaver": "https://map.naver.com/v5/search/부산광역시 중구 중구로 32",
+      "estimatedCost": 0,
+      "costLabel": "商圈購物"
+    },
+    {
+      "id": "spot-14-2",
+      "timeStart": "18:15",
+      "timeEnd": "19:00",
+      "title": "景點：樂天百貨光復店 11F 頂樓花園 🌉",
+      "desc": "登上樂天百貨頂樓觀景花園，遠眺影島大橋與釜山港的開闊夜景。",
+      "address": "부산광역시 중구 중앙대로 2 (롯데백화점 광복점)",
+      "note": "【夜景】11 樓的空中花園是釜山最知名的免費夜景點之一，可以 360 度俯瞰影島大橋與港區風光！",
+      "mapLinkKakao": "https://map.kakao.com/link/search/부산광역시 중구 중앙대로 2",
+      "mapLinkNaver": "https://map.naver.com/v5/search/부산광역시 중구 중앙대로 2",
+      "estimatedCost": 0,
+      "costLabel": "免費夜景"
+    },
+    {
+      "id": "spot-14-3",
+      "timeStart": "19:00",
       "timeEnd": "20:00",
-      "title": "南浦洞精華區 ＆ 樂天百貨 11 樓頂樓花園 ＆ 晚餐：南浦蔘雞湯 🛍️",
-      "desc": "大逛光復路、國際市場、樂天百貨大創。樂天 11 樓免費看影島大橋與釜山港景！晚餐享用數十年歷史南浦蔘雞湯。",
+      "title": "晚餐：南浦蔘雞湯 🍲",
+      "desc": "享用數十年歷史傳統老店蔘雞湯，滋補養身、香氣濃郁。",
       "address": "부산광역시 중구 남포길 16-1 (남포삼계탕)",
-      "note": "【樂天免費夜景】11 樓頂樓花園可免費近距離看影島大橋！【晚餐】南浦蔘雞湯雞肉軟嫩、附人蔘酒！",
+      "note": "【美食】經典滋補蔘雞湯，雞肉燉得極為軟嫩易離骨，湯頭鮮美回甘，用餐會附上一小瓶人蔘酒（可直接喝或加進湯裡）。",
       "mapLinkKakao": "https://map.kakao.com/link/search/부산광역시 중구 남포길 16-1",
       "mapLinkNaver": "https://map.naver.com/v5/search/부산광역시 중구 남포길 16-1",
       "estimatedCost": 45000,
-      "costLabel": "晚餐與南浦洞採買"
+      "costLabel": "人蔘雞晚餐"
     },
     {
       "id": "spot-15",
@@ -494,10 +584,17 @@
       "timeEnd": "20:00",
       "title": "晚餐：海雲台市場盲鰻 或 名品海雲台傳聞中蔘雞湯 🍲",
       "desc": "享用在地炭火香辣盲鰻或濃醇滋補傳聞中蔘雞湯，用餐後逛市場與 Olive Young。",
-      "address": "부산광역시 해운대구 중동2로 6 (名品海雲台蔘雞湯)",
+      "addresses": [
+        {
+          "label": "海雲台傳統市場 盲鰻產區 (시장 장어)",
+          "address": "부산광역시 해운대구 구남로41번길 22-1"
+        },
+        {
+          "label": "名品海雲台蔘雞湯 (해운대소문난삼계탕)",
+          "address": "부산광역시 해운대구 중동2로 6"
+        }
+      ],
       "note": "【美食】蔘雞湯附贈人蔘酒小瓶可直接飲用或加入湯中；盲鰻炭火香辣滋味！",
-      "mapLinkKakao": "https://map.kakao.com/link/search/부산광역시 해운대구 중동2로 6",
-      "mapLinkNaver": "https://map.naver.com/v5/search/부산광역시 해운대구 중동2로 6",
       "estimatedCost": 36000,
       "costLabel": "海雲台晚餐費"
     },
@@ -569,17 +666,30 @@
       "costLabel": "膠囊列車車票"
     },
     {
-      "id": "d5-spot-4",
+      "id": "d5-spot-4-1",
       "timeStart": "11:05",
-      "timeEnd": "12:00",
-      "title": "拍照：灌籃高手海景平交道 ＆ 青沙浦天空步道 📸",
-      "desc": "青沙浦站一出站拍灌籃高手海景平交道，步行 8 分鐘至天空步道停留 20 分鐘。",
-      "address": "부산해운대구청사포로120-1",
-      "note": "【定位】定位平交道旁的「Clam Sand Busan」咖啡廳即可找到最佳拍照點！",
-      "mapLinkKakao": "https://map.kakao.com/link/search/부산해운대구청사포로120-1",
-      "mapLinkNaver": "https://map.naver.com/v5/search/부산해운대구청사포로120-1",
+      "timeEnd": "11:30",
+      "title": "拍照：灌籃高手海景平交道 📸",
+      "desc": "青沙浦站一出站即可看到極像鎌倉高校前的灌籃高手海景平交道！",
+      "address": "부산 해운대구 청사포로 120-1",
+      "note": "【拍照】定位在平交道旁的「Clam Sand Busan」咖啡廳即可找到最佳合影點，拍照時請務必注意往來車輛與輕軌！",
+      "mapLinkKakao": "https://map.kakao.com/link/search/부산 해운대구 청사포로 120-1",
+      "mapLinkNaver": "https://map.naver.com/v5/search/부산 해운대구 청사포로 120-1",
       "estimatedCost": 0,
       "costLabel": "免費參觀拍照"
+    },
+    {
+      "id": "d5-spot-4-2",
+      "timeStart": "11:30",
+      "timeEnd": "12:00",
+      "title": "景點：青沙浦踏石展望台 (天空步道) 🌉",
+      "desc": "沿著海岸走至踏石展望台，行走在懸空玻璃地板上，感受海浪從腳下流過的震撼。",
+      "address": "부산광역시 해운대구 청사포로 167 (청사포 다릿돌전망대)",
+      "note": "【參觀】展望台伸入海中，中段有透明玻璃與鐵網設計，可以體驗懸空刺激感。需在入口套上專用鞋套，若遇強風或大雨可能會暫停開放。門票免費！",
+      "mapLinkKakao": "https://map.kakao.com/link/search/부산광역시 해운대구 청사포로 167",
+      "mapLinkNaver": "https://map.naver.com/v5/search/부산광역시 해운대구 청사포로 167",
+      "estimatedCost": 0,
+      "costLabel": "免費參觀"
     },
     {
       "id": "d5-spot-5",
@@ -587,10 +697,17 @@
       "timeEnd": "13:15",
       "title": "午餐：向海開飯 (醬蟹定食) 或 青沙浦船長家 (烤貝烤盲鰻) 🦪",
       "desc": "享用向海開飯鮑魚黃花魚/醬蟹定食，或船長家綜合炭火烤貝海鮮！",
-      "address": "부산 해운대구 청사포로58번길 118",
+      "addresses": [
+        {
+          "label": "向海開飯 (올바릇식당) — 醬蟹定食／鮑魚黃花魚",
+          "address": "부산광역시 해운대구 청사포로58번길 83 1층"
+        },
+        {
+          "label": "青沙浦船長家 (선장집) — 烤貝／烤盲鰻",
+          "address": "부산광역시 해운대구 청사포로 128번길 66"
+        }
+      ],
       "note": "【美食】享受青沙浦極致海鮮大餐！",
-      "mapLinkKakao": "https://map.kakao.com/link/search/부산 해운대구 청사포로58번길 118",
-      "mapLinkNaver": "https://map.naver.com/v5/search/부산 해운대구 청사포로58번길 118",
       "estimatedCost": 65000,
       "costLabel": "海鮮大餐午餐費"
     },
@@ -600,10 +717,10 @@
       "timeEnd": "14:15",
       "title": "體驗：海岸列車 (青沙浦 ➔ 尾浦) 🚆",
       "desc": "走到青沙浦車站，用 VBP BIG 5 兌換實體車票搭乘海岸列車回到尾浦。",
-      "address": "부산광역시 해운대구 청사포",
-      "note": "【VBP 藍色景點】使用 VBP 兌換海岸列車實體車票搭回尾浦。",
-      "mapLinkKakao": "https://map.kakao.com/link/search/부산광역시 해운대구 青沙浦",
-      "mapLinkNaver": "https://map.naver.com/v5/search/부산광역시 해운대구 青沙浦",
+      "address": "부산 해운대구 청사포로 116 (청사포정거장)",
+      "note": "【VBP 藍色景點】走到釜山海雲台藍線公園青沙浦車站，使用 VBP 兌換海岸列車實體車票搭回尾浦。",
+      "mapLinkKakao": "https://map.kakao.com/link/search/부산 해운대구 청사포로 116",
+      "mapLinkNaver": "https://map.naver.com/v5/search/부산 해운대구 청사포로 116",
       "estimatedCost": 0,
       "costLabel": "海岸列車 (VBP 免費)"
     },
@@ -654,10 +771,10 @@
       "timeEnd": "10:00",
       "title": "早餐：廣安里人氣海景早午餐 Working Holiday 🥞",
       "desc": "享用廣安里海灘第一排無敵海景早午餐與熱咖啡。(12:00 前辦理退房)",
-      "address": "부산 수영구 광안해변로 219",
-      "note": "【退房與早午餐】愜意享用早午餐，12:00 前退房。",
-      "mapLinkKakao": "https://map.kakao.com/link/search/부산 수영구 광안해변로 219",
-      "mapLinkNaver": "https://map.naver.com/v5/search/부산 수영구 광안해변로 219",
+      "address": "부산 수영구 광안해변로 235 3층 (워킹홀리데이)",
+      "note": "【退房與早午餐】位於廣安里海灘第一排，可由 Olive Young 廣安店旁搭乘電梯至 3 樓。愜意享用早午餐，12:00 前退房。",
+      "mapLinkKakao": "https://map.kakao.com/link/search/부산 수영구 광안해변로 235",
+      "mapLinkNaver": "https://map.naver.com/v5/search/부산 수영구 광안해변로 235",
       "estimatedCost": 25000,
       "costLabel": "海景早午餐費"
     },
@@ -680,12 +797,19 @@
       "timeEnd": "12:15",
       "title": "午餐：Handasot 釜飯 (한다솥 廣安里總店) 或 冬面食小麥冷麵 🍚",
       "desc": "享用主打新鮮鮑魚雪蟹的極品現炊釜飯，或 Q 彈小麥冷麵與手工薄皮餃子！",
-      "address": "부산광역시 수영구 남천바다로33번길 101 (Handasot)",
+      "addresses": [
+        {
+          "label": "Handasot 釜飯 (한다솥 廣安里總店) — 海鮮釜飯",
+          "address": "부산광역시 수영구 남천바다로33번길 101"
+        },
+        {
+          "label": "冬面食小麥冷麵 (동면식밀면) — Q彈小麥冷麵／手工餃子",
+          "address": "부산 수영구 광안해변로 251 1층"
+        }
+      ],
       "note": "【美食】Handasot 釜飯淋特製醬汁拌勻，倒大麥茶做成茶湯泡飯！冬面食小麥冷麵消暑清爽。",
-      "mapLinkKakao": "https://map.kakao.com/link/search/부산광역시 수영구 남천바다로33번길 101",
-      "mapLinkNaver": "https://map.naver.com/v5/search/부산광역시 수영구 남천바다로33번길 101",
       "estimatedCost": 36000,
-      "costLabel": "釜飯午餐費"
+      "costLabel": "午餐費"
     },
     {
       "id": "d6-spot-4",
