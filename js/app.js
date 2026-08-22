@@ -121,6 +121,17 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // 4. Start Time ticking loop
   startClockTicker();
+
+  // 5. Setup Back To Top Scroll Listener
+  window.addEventListener('scroll', () => {
+    const topBtn = document.getElementById('back-to-top-btn');
+    if (!topBtn) return;
+    if (window.scrollY > 250) {
+      topBtn.classList.add('show');
+    } else {
+      topBtn.classList.remove('show');
+    }
+  });
 });
 
 // Load Local Storage State
@@ -163,7 +174,6 @@ function switchDay(dayKey) {
   renderHotelCard();
   renderItinerary();
   updateTimelineStates();
-  scrollToCurrentActiveEvent();
 }
 
 // Render Hotel Accommodation Card
@@ -345,7 +355,6 @@ function switchTab(tabName) {
     document.getElementById('content-itinerary').classList.add('active');
     updateAllExpensesUI();
     recalculateTotals();
-    scrollToCurrentActiveEvent();
   }
 }
 
@@ -787,7 +796,6 @@ function updateTimelineStates() {
 
     if (activeSpot.id !== lastActiveSpotId) {
       lastActiveSpotId = activeSpot.id;
-      scrollToCurrentActiveEvent();
     }
   } else {
     const firstStart = getMinutesOfDay(currentList[0].timeStart);
@@ -810,16 +818,29 @@ function updateTimelineStates() {
   }
 }
 
-// Scroll to the active timeline item
+// Scroll to Top (Back-to-top FAB)
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Scroll to the active timeline item (Manual trigger via "定位當前" button)
 function scrollToCurrentActiveEvent() {
   if (lastActiveSpotId) {
     const activeCard = document.getElementById(`card-${lastActiveSpotId}`);
     if (activeCard) {
-      // Add micro-delay for DOM tab switches to settle
+      activeCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      activeCard.style.transition = 'box-shadow 0.3s ease';
+      activeCard.style.boxShadow = '0 0 0 4px rgba(37, 99, 235, 0.4)';
       setTimeout(() => {
-        activeCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }, 150);
+        activeCard.style.boxShadow = '';
+      }, 1500);
+      return;
     }
+  }
+  // If no spot is currently active, scroll to timeline top
+  const timelineElem = document.getElementById('timeline-container');
+  if (timelineElem) {
+    timelineElem.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 }
 

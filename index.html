@@ -238,8 +238,13 @@
 
       <!-- Current Schedule Dashboard -->
       <section class="current-panel">
-        <div class="current-tag">
-          <span class="pulse-badge"></span> 目前行程狀態
+        <div class="current-tag-row">
+          <div class="current-tag">
+            <span class="pulse-badge"></span> 目前行程狀態
+          </div>
+          <button id="locate-current-btn" onclick="scrollToCurrentActiveEvent()" class="locate-current-btn" title="滾動定位到當前進行中的景點">
+            <i class="fa-solid fa-crosshairs"></i> 定位當前
+          </button>
         </div>
         <div id="current-title" class="current-title">載入中...</div>
         <div id="current-next" class="current-next">下個景點: 載入中...</div>
@@ -395,6 +400,11 @@
       保存網頁至手機桌面，隨時隨地離線瀏覽與記帳。
     </footer>
   </div>
+
+  <!-- Floating Back To Top Button -->
+  <button id="back-to-top-btn" class="back-to-top-btn" onclick="scrollToTop()" title="回到最頂端">
+    <i class="fa-solid fa-arrow-up"></i>
+  </button>
 
   <!-- JavaScript Logic (外部載入，減少 index.html 體積) -->
   <script src="js/data.js"></script>
