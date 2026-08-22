@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
@@ -8,6 +8,9 @@
   <link rel="stylesheet" href="index.css">
   <!-- FontAwesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Anti-Crawler Meta Tags -->
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+  <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
   <!-- PWA & iOS Mobile Capability -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -16,12 +19,57 @@
 </head>
 <body>
 
+  <!-- ================= AUTHENTICATION PASSCODE OVERLAY ================= -->
+  <div id="auth-overlay" class="auth-overlay">
+    <div class="auth-card">
+      <div class="auth-icon-circle">
+        <i class="fa-solid fa-shield-halved"></i>
+      </div>
+      <h2 class="auth-title">釜山旅遊特助</h2>
+      <p class="auth-subtitle">私人行程存取保護，請輸入通關密碼</p>
+
+      <form id="auth-form" onsubmit="handleAuthSubmit(event)">
+        <div class="auth-input-group">
+          <input 
+            type="password" 
+            id="auth-pass-input" 
+            placeholder="請輸入通關密碼" 
+            autocomplete="current-password"
+            required
+            class="auth-input"
+          >
+          <button type="button" onclick="togglePassVisibility()" class="toggle-pass-btn" id="toggle-pass-btn" title="切換密碼可見性">
+            <i class="fa-solid fa-eye"></i>
+          </button>
+        </div>
+
+        <div id="auth-error-msg" class="auth-error-msg">密碼錯誤，請重新輸入！</div>
+
+        <div class="auth-remember-row">
+          <label class="auth-remember-label">
+            <input type="checkbox" id="auth-remember-checkbox" checked>
+            <span>記住此裝置（旅行時免重複輸入）</span>
+          </label>
+        </div>
+
+        <button type="submit" class="auth-submit-btn" id="auth-submit-btn">
+          <i class="fa-solid fa-arrow-right-to-bracket"></i> 解鎖進入行程
+        </button>
+      </form>
+    </div>
+  </div>
+
   <!-- App Container -->
   <div class="app-container">
     
     <!-- Header -->
     <header class="app-header">
-      <h1>釜山旅遊特助 🇰🇷</h1>
+      <div class="header-top-row">
+        <h1>釜山旅遊特助 🇰🇷</h1>
+        <button id="lock-app-btn" onclick="lockApp()" class="lock-app-btn" title="鎖定行程">
+          <i class="fa-solid fa-lock"></i>
+        </button>
+      </div>
       <p>您的專屬匯率換算與一日行程導航神器</p>
       
       <!-- Quick Info Rate Tag -->
@@ -39,7 +87,10 @@
         <i class="fa-solid fa-calculator"></i> 匯率換算
       </button>
       <button id="tab-itinerary" class="tab-btn" onclick="switchTab('itinerary')">
-        <i class="fa-solid fa-map-location-dot"></i> 釜山一日遊
+        <i class="fa-solid fa-map-location-dot"></i> 釜山行程
+      </button>
+      <button id="tab-guide" class="tab-btn" onclick="switchTab('guide')">
+        <i class="fa-solid fa-bag-shopping"></i> 逛街＆行前
       </button>
     </nav>
 
@@ -127,7 +178,7 @@
             <span>KRW</span>
           </div>
           <p style="font-size: 0.65rem; color: var(--text-muted); line-height: 1.4;">
-            提示：釜山南浦洞民間換錢所（如友利、映真）匯率通常優於刷卡。您可以手動輸入在當地實際換到的匯率，讓計算更精準！
+            提示：釜山民間換錢所（如西面那英、金海機場 MONEY BOX）匯率通常優於刷卡。您可以手動輸入實際換到的匯率，讓計算更精準！
           </p>
         </div>
       </details>
@@ -170,12 +221,12 @@
             <i class="fa-solid fa-calendar-days"></i> 選擇釜山行程天數 (9/11 ~ 9/16):
           </label>
           <select id="day-select-dropdown" onchange="switchDay(this.value)" class="day-select-dropdown">
-            <option value="day1">9/11 (週四) Day 1</option>
-            <option value="day2">9/12 (週五) Day 2</option>
-            <option value="day3" selected>9/13 (週六) Day 3</option>
-            <option value="day4">9/14 (週日) Day 4</option>
-            <option value="day5">9/15 (週一) Day 5</option>
-            <option value="day6">9/16 (週二) Day 6</option>
+            <option value="day1">9/11 (週五) Day 1</option>
+            <option value="day2">9/12 (週六) Day 2</option>
+            <option value="day3" selected>9/13 (週日) Day 3</option>
+            <option value="day4">9/14 (週一) Day 4</option>
+            <option value="day5">9/15 (週二) Day 5</option>
+            <option value="day6">9/16 (週三) Day 6</option>
           </select>
         </div>
       </section>
@@ -275,6 +326,67 @@
         </div>
       </details>
 
+    </main>
+
+    <!-- ================= TAB 3: SHOPPING & PREP GUIDE ================= -->
+    <main id="content-guide" class="tab-content">
+      <div class="guide-container">
+        
+        <!-- Header Banner -->
+        <div class="guide-banner">
+          <h3><i class="fa-solid fa-shirt"></i> 釜山逛街買衣服＆行前指南</h3>
+          <p>匯整男女生必逛熱門品牌、退稅須知、換匯據點與票券重點整理！</p>
+        </div>
+
+        <!-- Section: Shopping Areas & Brands -->
+        <div id="shopping-guide-container">
+          <!-- Rendered dynamically by app.js -->
+        </div>
+
+        <!-- Section: Core Travel Prep Notes -->
+        <div class="guide-card">
+          <div class="guide-card-header">
+            <span class="guide-card-title"><i class="fa-solid fa-clipboard-check"></i> 出發前核心備忘</span>
+          </div>
+
+          <div class="prep-box">
+            <div class="prep-box-title"><i class="fa-solid fa-ticket"></i> VBP BIG 5 數位版 Pass</div>
+            <ul>
+              <li><strong>紫色景點 (2)</strong>：Club D Oasis 汗蒸幕 (4小時)、Skyline Luge 斜坡滑車 (2次)。</li>
+              <li><strong>藍色景點 (3)</strong>：甘川洞手翻書 Flipbook Studio、松島海上纜車 (來回)、海岸列車 (青沙浦➔尾浦)。</li>
+              <li>出發前先綁定 Visit Busan Pass App，進景點直接掃描手機 QR Code。</li>
+            </ul>
+          </div>
+
+          <div class="prep-box">
+            <div class="prep-box-title"><i class="fa-solid fa-money-bill-wave"></i> 換匯與現鈔推薦</div>
+            <ul>
+              <li><strong>金海機場 MONEY BOX</strong>：國際航廈 3 號出口對面輕軌站 1 樓驗票口前，匯率極佳。</li>
+              <li><strong>西面那英換錢所</strong>：西面站 7 號出口步行 2-3 分鐘（服飾雜貨店內），營業時間 09:00-20:00。</li>
+              <li>隨身預備約 ₩50,000 ~ ₩100,000 韓元現金儲值交通卡或小吃攤。</li>
+            </ul>
+          </div>
+
+          <div class="prep-box">
+            <div class="prep-box-title"><i class="fa-solid fa-receipt"></i> 退稅須知</div>
+            <ul>
+              <li>Olive Young 滿 3 萬韓元持護照現場直接退稅。</li>
+              <li>單筆消費滿 15,000 韓元以上即可退稅（上限單筆 100 萬韓元）。</li>
+            </ul>
+          </div>
+
+          <div class="prep-box">
+            <div class="prep-box-title"><i class="fa-solid fa-mobile-screen-button"></i> 必備 App</div>
+            <ul>
+              <li><strong>Catch Table</strong>：名店排隊候位抽號碼牌。</li>
+              <li><strong>Kakao T / Uber</strong>：叫計程車與車資預估。</li>
+              <li><strong>Naver Map / KakaoMap</strong>：精確地點導航與路線。</li>
+              <li><strong>Papago</strong>：韓中文即時拍照翻譯。</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
     </main>
 
     <!-- Footer -->

@@ -4,3 +4,8 @@
 ~$*
 .DS_Store
 HANDOFF.md
+*.ps1
+*.py
+new_text.txt
+orig_text.txt
+naver_addresses.txt
